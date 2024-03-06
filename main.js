@@ -29,7 +29,8 @@ const scenes = {
         add([sprite("papyrus"), scale(2),pos(250,40)])
         const positionTexte = vec2(60,275);
         const texteStart = "* Papyrus blocks the way!"
-        window.currentText = animerTexte(texteStart, positionTexte)
+        window.currentText = texteStart
+        window.currentTextDisplay = animerTexte(window.currentText, positionTexte)
         UIManager.init();
         UIManager.displayCombatMenu(enemyName);
         
@@ -203,10 +204,10 @@ const scenes = {
         }
     
         // Animation pour transformer la boîte
-        loop(0.002, () => {
+        loop(0.007, () => {
             // Augmentez ces valeurs pour accélérer l'animation
-            const ajustementLargeur = 12; // Précédemment 4
-            const ajustementPosition = 6; // Précédemment 2
+            const ajustementLargeur = 10; // Précédemment 4
+            const ajustementPosition = 5; // Précédemment 2
         
             if (interieur.width > 225) {
                 interieur.width -= ajustementLargeur;
@@ -226,7 +227,6 @@ const scenes = {
             {position:"fight"}
         ])
         onKeyDown("left", () => {
-            // .move() is provided by pos() component, move by pixels per second
             heart.move(-SPEED, 0)
         })
         
