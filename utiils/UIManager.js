@@ -8,13 +8,11 @@ class UI {
         ];
         this.heartPos = [43, 443];
         this.status = "start";
+        
         this.enemyName = "";
     }
 
     init() {
-        onUpdate(() => {
-            
-        })
         this.buttons.forEach(btn => {
             const position = vec2(btn.pos[0], btn.pos[1]);
             btn.entity = add([
@@ -22,7 +20,6 @@ class UI {
                 pos(position)
             ]);
         });
-
         const heartPosition = vec2(this.heartPos[0], this.heartPos[1]);
         this.heart = add([sprite("heart"), pos(heartPosition)]);
 
@@ -32,23 +29,34 @@ class UI {
 
     setupInputHandlers() {
         onKeyPress("right", () => {
+            if (this.status !== "fightMenu" && this.status !== "actMenu" && this.status !== "itemMenu" && this.status !=="spareMenu" && this.status !="attackBar") {
             this.moveCursor("right");
+            }
         });
         onKeyPress("left", () => {
+            if (this.status !== "fightMenu" && this.status !== "actMenu" && this.status !== "itemMenu" && this.status !=="spareMenu" && this.status !="attackBar") {
             this.moveCursor("left");
+            }
         });
         onKeyPress("z", () => {
-            this.activateButton();
+            if(this.status !="attackBar"){
+                this.activateButton(); // Désélectionne le bouton lorsque "x" est pressé
+            }
+        });
+        onKeyPress("enter", () => {
+            if(this.status !="attackBar"){
+                this.activateButton(); // Désélectionne le bouton lorsque "x" est pressé
+            }
         });
         onKeyPress("x", () => {
-            if(this.status != "start"){
+            if(this.status != "start" && this.status !="attackBar"){
                 this.deselectButton(); // Désélectionne le bouton lorsque "x" est pressé
             }
         });
     }
     deselectButton() {
         // Désélectionne le bouton actuellement sélectionné
-        destroy(window.currentTextDisplay)
+        destroy(currentTextDisplay)
         const positionTexte = vec2(60,275);
         this.buttons.forEach(btn => {
             if(btn.isPressed == true){
@@ -59,6 +67,7 @@ class UI {
         this.status = "start"; // Réinitialise le statut
         console.log("All buttons deselected");z
         currentTextDisplay = this.animerTexte(window.currentText, positionTexte)
+        this.updateButtons()
     }
 
     moveCursor(direction) {
@@ -70,7 +79,6 @@ class UI {
         } else if (direction === "left") {
             newIndex = (currentIndex - 1 + this.buttons.length) % this.buttons.length;
         }
-
         this.buttons[currentIndex].isSelected = false;
         this.buttons[newIndex].isSelected = true;
         play("uimove")
@@ -92,6 +100,10 @@ class UI {
     activateButton() {
         const selectedButton = this.buttons.find(btn => btn.isSelected);
         console.log(`${selectedButton.id} button activated`);
+        if(this.status == "fightMenu"){
+            this.attackBar()
+            return;
+        }
         this.status = selectedButton.id;
         let positionTexte = vec2(60,275);
         const statusdis = add([
@@ -107,29 +119,26 @@ class UI {
         onUpdate(() => {
             statusdis.use(text(this.status))
         })
-        if(this.status=="fight"){
-            this.fightMenu(this.enemyName)
-        }
-        if(this.status=="act"){
-            this.actMenu(this.enemyName)
-        }
-        if(this.status=="item"){
-            this.itemMenu(this.enemyName)
-        }
-        if(this.status=="spare"){
-            this.spareMenu(this.enemyName)
+        switch (this.status) {
+        case "fight":
+            this.fightMenu(this.enemyName);
+            break;
+        case "act":
+            this.actMenu(this.enemyName);
+            break;
+        case "item":
+            this.itemMenu(this.enemyName);
+            break;
+        case "spare":
+            this.spareMenu(this.enemyName);
+            break;
         }
     }
     fightMenu(enemyName) {
         destroy(window.currentTextDisplay)
         let positionTexte = vec2(60,275);
+        this.heart.use(pos(positionTexte))
         this.status = "fightMenu"
-        text(this.status, {
-            size: 34, 
-            font: "deter", 
-            width: 510, 
-            lineSpacing: 8
-        }),
         pos(positionTexte.add(vec2(30,-60))), 
         color(255, 255, 255)
         window.currentTextDisplay = add([text("  * " + enemyName,{
@@ -138,16 +147,104 @@ class UI {
         } ),pos(positionTexte)])
 
     }
+    attackBar() {
+        this.status = "attackBar";
+        destroy(this.heart);
+        destroy(currentTextDisplay);
+        window.attack_bar = add([sprite("attackbar"), pos(38, 254), scale(1)]);
+        const atk_cursor = add([sprite("attackcursor"), pos(48, 257), scale(0.97)]);
+    
+        let score = 0;
+        let increasing = true; // Indicates whether the score is currently increasing
+    
+        const scoredis = add([
+            text(score.toString(), {
+                size: 34,
+                font: "deter",
+                width: 510,
+                lineSpacing: 8
+            }),
+            pos(50, 180),
+            color(255, 255, 255)
+        ]);
+    
+        const updateScore = () => {
+            score += increasing ? 2.5 : -2.5;
+            scoredis.text = score.toFixed(2);
+        };
+    
+        onUpdate(() => {
+            scoredis.use(text(score.toString()))
+        });
+    
+        const cursorMoveLoop = loop(0.007, () => {
+            atk_cursor.move(396, 0); // Move cursor
+            updateScore(); // Update score
+    
+            if (atk_cursor.pos.x >= 578) {
+                cursorMoveLoop.cancel();
+                finishAttack(); // Call 'finishAttack' directly here
+            }
+        });
+    
+        wait(0.636, () => {
+            increasing = false; // Switch to decreasing phase
+        });
+    
+        const blinkCursor = (cursor) => {
+            let isOriginalSprite = true;
+            const blinking = loop(0.1, () => {
+                if (isOriginalSprite) {
+                    cursor.use(sprite("attackcursor1"));
+                } else {
+                    cursor.use(sprite("attackcursor"));
+                }
+                isOriginalSprite = !isOriginalSprite;
+            });
+            return blinking;
+        };
+    
+        let atkAnimationPlayed = false;
+        const playatk = () => {
+            if (!atkAnimationPlayed) {
+                const atk = add([sprite("atk"), pos(290, -10), scale(1.2)]);
+                atk.play("idle");
+                atkAnimationPlayed = true;
+                wait(3, () => {
+                    go("2"); // Change to the next scene or logic
+                    this.status = "start";
+                });
+            }
+        };
+        wait(0.01, () => {
+        onKeyPress("z", () => {
+            if (this.status === "attackBar" && !atkAnimationPlayed) {
+                cursorMoveLoop.cancel();
+                increasing = false;
+                blinkCursor(atk_cursor);
+                playatk();
+            }
+        });
+    
+        onKeyPress("enter", () => {
+            if (this.status === "attackBar" && !atkAnimationPlayed) {
+                cursorMoveLoop.cancel();
+                increasing = false;
+                blinkCursor(atk_cursor);
+                playatk();
+            }
+        }); })
+    
+        const finishAttack = () => {
+            this.status = "start"; // Correctly set 'this.status' without needing to bind 'this'
+            console.log("Attack finished, status reset to start.");
+        };
+    }
+    
     actMenu(enemyName) {
         destroy(window.currentTextDisplay)
         this.status = "actMenu"
         let positionTexte = vec2(60,275);
-        text(this.status, {
-            size: 34, 
-            font: "deter", 
-            width: 510, 
-            lineSpacing: 8
-        }),
         pos(positionTexte.add(vec2(30,-60))), 
         color(255, 255, 255)
     }
@@ -155,12 +252,6 @@ class UI {
         destroy(window.currentTextDisplay)
         this.status = "itemMenu"
         let positionTexte = vec2(60,275);
-        text(this.status, {
-            size: 34, 
-            font: "deter", 
-            width: 510, 
-            lineSpacing: 8
-        }),
         pos(positionTexte.add(vec2(30,-60))), 
         color(255, 255, 255)
     }
@@ -168,12 +259,6 @@ class UI {
         destroy(window.currentTextDisplay)
         this.status = "spareMenu"
         let positionTexte = vec2(60,275);
-        text(this.status, {
-            size: 34, 
-            font: "deter", 
-            width: 510, 
-            lineSpacing: 8
-        }),
         pos(positionTexte.add(vec2(30,-60))), 
         color(255, 255, 255)
     }
@@ -214,6 +299,7 @@ class UI {
         textWrite(0);
         return objetTexte
     }
+    
 }
 
 export const UIManager = new UI();

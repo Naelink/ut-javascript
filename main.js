@@ -24,7 +24,7 @@ const scenes = {
     1: () => {
         let enemyName="Papyrus"
         add([sprite("box"), pos(30, 240),scale (0.559)])
-        var status = "start"
+        const status = "start"
         add([sprite("blackbg")])
         add([sprite("papyrus"), scale(2),pos(250,40)])
         const positionTexte = vec2(60,275);
@@ -110,6 +110,42 @@ const scenes = {
     2: () => {
         add([sprite("blackbg")])
         add([sprite("papyrus"), scale(2),pos(250,40)])
+        function displayplayerHP(nombre, positionInitiale) {
+            for (let i = 0; i < nombre; i++) {
+                add([
+                    rect(1.2, 20), // Crée une barre de largeur 1 et hauteur 20
+                    pos(positionInitiale.x + i * 1.2, positionInitiale.y), // Positionne chaque barre à la suite de l'autre
+                    color(255, 255, 0), // Définit la couleur de la barre en jaune (RGB)
+                ]);
+            }
+        }
+        function displayplayermaxHP(nombre, positionInitiale) {
+            for (let i = 0; i < nombre; i++) {
+                add([
+                    rect(1.2, 20), // Crée une barre de largeur 1 et hauteur 20
+                    pos(positionInitiale.x + i * 1.2, positionInitiale.y), // Positionne chaque barre à la suite de l'autre
+                    color(255, 0, 0), // Définit la couleur de la barre en jaune (RGB)
+                ]);
+            }
+        }
+        add([text(playerName,{
+            size:22,
+            font:"trouble",
+        } ),pos(30,400)])
+        add([text("lv " + playerLV ,{
+            size:22,
+            font:"trouble",
+        } ),pos(128,400)])
+        add([text("HP" ,{
+            size:10,
+            font:"HP",
+        } ),pos(250,404)])
+        add([text(playerHP + " / " + playermaxHP,{
+            size:20,
+            font:"trouble",
+        } ),pos((320+((playermaxHP-20)*1.2)),400)])
+        displayplayermaxHP(playermaxHP, vec2(280,400))
+        displayplayerHP(playerHP, vec2(280, 400))
         const fightbtn = add([
             sprite("fight_btn"),
             pos(35,430),
@@ -204,19 +240,38 @@ const scenes = {
         }
     
         // Animation pour transformer la boîte
-        loop(0.007, () => {
-            // Augmentez ces valeurs pour accélérer l'animation
-            const ajustementLargeur = 10; // Précédemment 4
-            const ajustementPosition = 5; // Précédemment 2
+        function reduceBoxSize() {
+            let loopId = loop(0.007, () => {
+                const ajustementLargeur = 14;
+                const ajustementPosition = 7;
+                if (interieur.width > 225) {
+                    interieur.width -= ajustementLargeur;
+                    contour.width -= ajustementLargeur;
+                    interieur.pos.x += ajustementPosition;
+                    contour.pos.x += ajustementPosition;
+                    updateWalls();
+                } else {
+                    loopId.cancel(); 
+                }
+            });
+        }
+        function increaseBoxSize() {
+            let loopId = loop(0.007, () => {
+                const ajustementLargeur = 14;
+                const ajustementPosition = 7;
+                if (interieur.width < 550) { 
+                    interieur.width += ajustementLargeur;
+                    contour.width += ajustementLargeur;
+                    interieur.pos.x -= ajustementPosition;
+                    contour.pos.x -= ajustementPosition;
+                    updateWalls();
+                } else {
+                    loopId.cancel(); 
+                }
+            });
+        }
+        reduceBoxSize();
         
-            if (interieur.width > 225) {
-                interieur.width -= ajustementLargeur;
-                contour.width -= ajustementLargeur;
-                interieur.pos.x += ajustementPosition;
-                contour.pos.x += ajustementPosition;
-                updateWalls()
-            }
-        });
         
         const SPEED = 150
         const heart = add ([
@@ -241,6 +296,14 @@ const scenes = {
         onKeyDown("down", () => {
             heart.move(0, SPEED)
         })
+        let fightProgress = 1
+        wait(10, () => {
+            destroy(heart)
+            increaseBoxSize()
+            wait(0.45, () => {
+                go("1")
+            });
+        });
     
     },
     3: () => {

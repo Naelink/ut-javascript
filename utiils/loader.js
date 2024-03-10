@@ -18,7 +18,23 @@ export const load = {
         loadSprite("box2", "./assets/box2.png")
         loadSprite("heart", "./assets/heart.png")
         loadSprite("papyrus", "./assets/papyrus.png")
+        loadSprite("attackbar", "./assets/attack_bar.png")
+        loadSprite("attackcursor", "./assets/attack_cursor.png")
+        loadSprite("attackcursor1", "./assets/attack_cursor1.png")
+        loadSprite("atk", "./assets/atk1.png", {
+            sliceX: 7,
+            anims: {
+                "idle": {
+                    // Starts from frame 0, ends at frame 3
+                    from: 0,
+                    to: 6,
+                    speed: 7
+                }
+            }
+        })
+        
         loadSound("uimove", "./assets/ui bip.mp3")
+        
     
 
     }
