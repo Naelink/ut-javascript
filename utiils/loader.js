@@ -32,7 +32,7 @@ export const load = {
                 }
             }
         })
-        
+        loadSprite("miss", "./assets/miss.png")
         loadSound("uimove", "./assets/ui bip.mp3")
         
     

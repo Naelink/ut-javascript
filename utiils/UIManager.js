@@ -21,7 +21,7 @@ class UI {
             ]);
         });
         const heartPosition = vec2(this.heartPos[0], this.heartPos[1]);
-        this.heart = add([sprite("heart"), pos(heartPosition)]);
+        this.heart = add([sprite("heart"), pos(heartPosition)])
 
         this.setupInputHandlers();
         add([sprite("box"), pos(30, 240),scale (0.559)])
@@ -169,26 +169,31 @@ class UI {
         ]);
     
         const updateScore = () => {
-            score += increasing ? 2.5 : -2.5;
             scoredis.text = score.toFixed(2);
         };
     
         onUpdate(() => {
             scoredis.use(text(score.toString()))
         });
-    
+        
         const cursorMoveLoop = loop(0.007, () => {
-            atk_cursor.move(396, 0); // Move cursor
-            updateScore(); // Update score
+            atk_cursor.move(800, 0); 
+            score += increasing ? 2.5 : -2.5;
+            if(this.score >100){
+                increasing = false
+            }
+            updateScore();
     
             if (atk_cursor.pos.x >= 578) {
                 cursorMoveLoop.cancel();
-                finishAttack(); // Call 'finishAttack' directly here
+                finishAttack(); 
+                window.miss = true
+                go("2"); 
             }
         });
     
         wait(0.636, () => {
-            increasing = false; // Switch to decreasing phase
+            increasing = false;
         });
     
         const blinkCursor = (cursor) => {
@@ -210,8 +215,10 @@ class UI {
                 const atk = add([sprite("atk"), pos(290, -10), scale(1.2)]);
                 atk.play("idle");
                 atkAnimationPlayed = true;
-                wait(3, () => {
-                    go("2"); // Change to the next scene or logic
+                wait(1, () => {
+                    window.miss = false
+                    window.hasAttacked = true
+                    go("2");
                     this.status = "start";
                 });
             }
@@ -239,6 +246,38 @@ class UI {
             this.status = "start"; // Correctly set 'this.status' without needing to bind 'this'
             console.log("Attack finished, status reset to start.");
         };
+    }
+    displayBossHP(Damage) {
+        let NewHP = (window.BossHP-Damage)
+        const maxBar = add([
+            rect(300, 20),
+            pos(165, 180),
+            color(61, 63, 60),
+        ]);
+        let currentHP = add([
+            rect((window.BossHP * 300 / window.BossMaxHP), 20),
+            pos(165, 180),
+            color(0, 217, 3),
+        ]);
+        const loopHP = loop(0.001, () => {
+            if (window.BossHP > NewHP && currentHP.width > 0) {
+                window.BossHP -= (window.BossMaxHP/300); 
+                currentHP.width = window.BossHP * 300 / window.BossMaxHP;
+                currentHP.use(rect(currentHP.width, 20));
+            } 
+            else if (currentHP.width <= 0){
+                loopHP.cancel();
+                go("3")
+            }
+            else {
+                loopHP.cancel();
+
+            }
+        });
+        wait(3, () => {
+            destroy(maxBar);
+            destroy(currentHP);
+        });
     }
     
     actMenu(enemyName) {
@@ -298,6 +337,24 @@ class UI {
         // Commencer à ajouter les lettres
         textWrite(0);
         return objetTexte
+    }
+    displayplayerHP(nombre, positionInitiale) {
+        for (let i = 0; i < nombre; i++) {
+            add([
+                rect(1.2, 20), // Crée une barre de largeur 1 et hauteur 20
+                pos(positionInitiale.x + i * 1.2, positionInitiale.y), // Positionne chaque barre à la suite de l'autre
+                color(255, 255, 0), // Définit la couleur de la barre en jaune (RGB)
+            ]);
+        }
+    }
+    displayplayermaxHP(nombre, positionInitiale) {
+        for (let i = 0; i < nombre; i++) {
+            add([
+                rect(1.2, 20), // Crée une barre de largeur 1 et hauteur 20
+                pos(positionInitiale.x + i * 1.2, positionInitiale.y), // Positionne chaque barre à la suite de l'autre
+                color(255, 0, 0), // Définit la couleur de la barre en jaune (RGB)
+            ]);
+        }
     }
     
 }

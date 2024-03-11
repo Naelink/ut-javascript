@@ -16,6 +16,8 @@ let playerName="Nael"
 let playerLV = 1
 let playermaxHP = 20
 let playerHP = 17
+window.BossHP = 680
+window.BossMaxHP = 680
 
 const scenes = {
     menu: () => {
@@ -23,6 +25,7 @@ const scenes = {
     },
     1: () => {
         let enemyName="Papyrus"
+        window.isBoss = true
         add([sprite("box"), pos(30, 240),scale (0.559)])
         const status = "start"
         add([sprite("blackbg")])
@@ -33,26 +36,6 @@ const scenes = {
         window.currentTextDisplay = animerTexte(window.currentText, positionTexte)
         UIManager.init();
         UIManager.displayCombatMenu(enemyName);
-        
-        
-        function displayplayerHP(nombre, positionInitiale) {
-            for (let i = 0; i < nombre; i++) {
-                add([
-                    rect(1.2, 20), // Crée une barre de largeur 1 et hauteur 20
-                    pos(positionInitiale.x + i * 1.2, positionInitiale.y), // Positionne chaque barre à la suite de l'autre
-                    color(255, 255, 0), // Définit la couleur de la barre en jaune (RGB)
-                ]);
-            }
-        }
-        function displayplayermaxHP(nombre, positionInitiale) {
-            for (let i = 0; i < nombre; i++) {
-                add([
-                    rect(1.2, 20), // Crée une barre de largeur 1 et hauteur 20
-                    pos(positionInitiale.x + i * 1.2, positionInitiale.y), // Positionne chaque barre à la suite de l'autre
-                    color(255, 0, 0), // Définit la couleur de la barre en jaune (RGB)
-                ]);
-            }
-        }
         add([text(playerName,{
             size:22,
             font:"trouble",
@@ -69,8 +52,8 @@ const scenes = {
             size:20,
             font:"trouble",
         } ),pos((320+((playermaxHP-20)*1.2)),400)])
-        displayplayermaxHP(playermaxHP, vec2(280,400))
-        displayplayerHP(playerHP, vec2(280, 400))
+        UIManager.displayplayermaxHP(playermaxHP, vec2(280,400))
+        UIManager.displayplayerHP(playerHP, vec2(280, 400))
 
         // Créer un objet de texte initial vide
         function animerTexte(texteComplet, positionTexte) {
@@ -110,23 +93,24 @@ const scenes = {
     2: () => {
         add([sprite("blackbg")])
         add([sprite("papyrus"), scale(2),pos(250,40)])
-        function displayplayerHP(nombre, positionInitiale) {
-            for (let i = 0; i < nombre; i++) {
-                add([
-                    rect(1.2, 20), // Crée une barre de largeur 1 et hauteur 20
-                    pos(positionInitiale.x + i * 1.2, positionInitiale.y), // Positionne chaque barre à la suite de l'autre
-                    color(255, 255, 0), // Définit la couleur de la barre en jaune (RGB)
-                ]);
-            }
+        if(window.isBoss = true && window.hasAttacked == true){
+            UIManager.displayBossHP(200)
+            window.hasAttacked = false
         }
-        function displayplayermaxHP(nombre, positionInitiale) {
-            for (let i = 0; i < nombre; i++) {
-                add([
-                    rect(1.2, 20), // Crée une barre de largeur 1 et hauteur 20
-                    pos(positionInitiale.x + i * 1.2, positionInitiale.y), // Positionne chaque barre à la suite de l'autre
-                    color(255, 0, 0), // Définit la couleur de la barre en jaune (RGB)
-                ]);
-            }
+        
+        add([
+            text(window.BossHP, {
+                size: 24, 
+                font: "deter", 
+                width: 510, 
+                lineSpacing: 8
+            })])
+        if(window.miss == true){
+            const missspr = add([sprite("miss"), pos(265, 110), scale(0.1)]);
+            window.miss = false
+            wait(1, () => {
+                destroy(missspr)
+            })
         }
         add([text(playerName,{
             size:22,
@@ -144,8 +128,8 @@ const scenes = {
             size:20,
             font:"trouble",
         } ),pos((320+((playermaxHP-20)*1.2)),400)])
-        displayplayermaxHP(playermaxHP, vec2(280,400))
-        displayplayerHP(playerHP, vec2(280, 400))
+        UIManager.displayplayermaxHP(playermaxHP, vec2(280,400))
+        UIManager.displayplayerHP(playerHP, vec2(280, 400))
         const fightbtn = add([
             sprite("fight_btn"),
             pos(35,430),
@@ -297,7 +281,7 @@ const scenes = {
             heart.move(0, SPEED)
         })
         let fightProgress = 1
-        wait(10, () => {
+        wait(5, () => {
             destroy(heart)
             increaseBoxSize()
             wait(0.45, () => {

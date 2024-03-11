@@ -1,0 +1,16 @@
+{
+  "name": "ut-javascript",
+  "version": "1.0.0",
+  "main": "app.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "electron": "^29.1.1",
+    "electron-packager": "^17.1.2"
+  }
+}
