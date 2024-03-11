@@ -274,6 +274,15 @@ class UI {
 
             }
         });
+        const displayDMG =  add([
+            text(Damage, {
+                size: 34,
+                font: "dmg",
+                width: 510,
+                lineSpacing: 8
+            }),
+            pos(165, 180),
+            color(222, 34, 10)])
         wait(3, () => {
             destroy(maxBar);
             destroy(currentHP);

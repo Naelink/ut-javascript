@@ -3,6 +3,7 @@ export const load = {
         loadFont("trouble", "./assets/TroubleBeneathTheDome.ttf")
         loadFont("deter", "./assets/DTM-Mono.otf")
         loadFont("hp", "./assets/ut-hp-font.ttf")
+        loadFont("dmg", "./assets/undertale-damage.ttf")
     },
     assets: () => {
         loadSprite("blackbg", "./assets/blackbg.png")
