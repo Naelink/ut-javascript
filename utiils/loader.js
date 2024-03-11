@@ -4,6 +4,7 @@ export const load = {
         loadFont("deter", "./assets/DTM-Mono.otf")
         loadFont("hp", "./assets/ut-hp-font.ttf")
         loadFont("dmg", "./assets/undertale-damage.ttf")
+        loadFont("dmg2", "./assets/undertale-attack-font.ttf")
     },
     assets: () => {
         loadSprite("blackbg", "./assets/blackbg.png")
@@ -22,6 +23,9 @@ export const load = {
         loadSprite("attackbar", "./assets/attack_bar.png")
         loadSprite("attackcursor", "./assets/attack_cursor.png")
         loadSprite("attackcursor1", "./assets/attack_cursor1.png")
+        loadSprite("snowdin", "./assets/snowdin1.png")
+        loadSprite("snowdin2", "./assets/snowdin2.png")
+        loadSprite("hitbox", "./assets/0.png")
         loadSprite("atk", "./assets/atk1.png", {
             sliceX: 7,
             anims: {
@@ -31,6 +35,53 @@ export const load = {
                     to: 6,
                     speed: 7
                 }
+            }
+        })
+        loadSprite("frisk", "./assets/frisk.png", {
+            sliceX: 12,
+            anims: {
+                "down": {
+                    // Starts from frame 0, ends at frame 3
+                    from: 0,
+                    to: 3,
+                    speed: 4,
+                    loop : true
+                },
+                "left": {
+                    // Starts from frame 0, ends at frame 3
+                    from: 4,
+                    to: 5,
+                    speed: 4,
+                    loop : true
+                },
+                "right": {
+                    from: 6,
+                    to: 7,
+                    speed: 4,
+                    loop : true
+                },
+                "up": {
+                    from: 8,
+                    to: 11,
+                    speed: 4,
+                    loop : true
+                },
+                "idled": {
+                    from: 0,
+                    to: 0
+                },
+                "idlel": {
+                    from: 4,
+                    to: 4,
+                },
+                "idler": {
+                    from: 6,
+                    to: 6,
+                },
+                "idleu": {
+                    from: 8,
+                    to: 8,
+                },
             }
         })
         loadSprite("miss", "./assets/miss.png")

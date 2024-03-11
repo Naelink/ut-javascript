@@ -154,11 +154,11 @@ class UI {
         window.attack_bar = add([sprite("attackbar"), pos(38, 254), scale(1)]);
         const atk_cursor = add([sprite("attackcursor"), pos(48, 257), scale(0.97)]);
     
-        let score = 0;
+        window.score = 0;
         let increasing = true; // Indicates whether the score is currently increasing
     
         const scoredis = add([
-            text(score.toString(), {
+            text(window.score.toString(), {
                 size: 34,
                 font: "deter",
                 width: 510,
@@ -169,17 +169,18 @@ class UI {
         ]);
     
         const updateScore = () => {
-            scoredis.text = score.toFixed(2);
+            scoredis.text = window.score.toFixed(2);
+            window.score = Math.floor(window.score)
         };
     
         onUpdate(() => {
-            scoredis.use(text(score.toString()))
+            scoredis.use(text(window.score.toString()))
         });
         
-        const cursorMoveLoop = loop(0.007, () => {
-            atk_cursor.move(800, 0); 
-            score += increasing ? 2.5 : -2.5;
-            if(this.score >100){
+        const cursorMoveLoop = loop(0.01, () => {
+            atk_cursor.move(500, 0); 
+            window.score += increasing ? 3 : -3.5;
+            if(window.score >100){
                 increasing = false
             }
             updateScore();
@@ -251,12 +252,12 @@ class UI {
         let NewHP = (window.BossHP-Damage)
         const maxBar = add([
             rect(300, 20),
-            pos(165, 180),
+            pos(165, 200),
             color(61, 63, 60),
         ]);
         let currentHP = add([
             rect((window.BossHP * 300 / window.BossMaxHP), 20),
-            pos(165, 180),
+            pos(165, 200),
             color(0, 217, 3),
         ]);
         const loopHP = loop(0.001, () => {
@@ -274,18 +275,37 @@ class UI {
 
             }
         });
-        const displayDMG =  add([
+        const displayDMG = add([
+            text(Damage, {
+                size: 24.9,
+                font: "dmg2",
+                width: 510,
+                lineSpacing: 8
+            }),
+            pos(289.5, 163),
+            color(0, 0, 0), "dmgdis"])
+            add([
+                text(Damage, {
+                    size: 24.9,
+                    font: "dmg2",
+                    width: 510,
+                    lineSpacing: 8
+                }),
+                pos(288, 163),
+                color(0, 0, 0), "dmgdis"])
+        add([
             text(Damage, {
                 size: 34,
                 font: "dmg",
                 width: 510,
                 lineSpacing: 8
             }),
-            pos(165, 180),
-            color(222, 34, 10)])
-        wait(3, () => {
+            pos(290, 160),
+            color(222, 34, 10), "dmgdis"]);
+        wait(1.5, () => {
             destroy(maxBar);
-            destroy(currentHP);
+            destroy(currentHP)
+            destroyAll("dmgdis");
         });
     }
     

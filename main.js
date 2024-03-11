@@ -94,7 +94,7 @@ const scenes = {
         add([sprite("blackbg")])
         add([sprite("papyrus"), scale(2),pos(250,40)])
         if(window.isBoss = true && window.hasAttacked == true){
-            UIManager.displayBossHP(200)
+            UIManager.displayBossHP(window.score)
             window.hasAttacked = false
         }
         
@@ -293,10 +293,105 @@ const scenes = {
     3: () => {
     
     },
+    4: () => {
+        add([sprite("snowdin"), pos(0,0), scale(2)])
+        add([sprite("snowdin2"), pos(4096,0), scale(2)])
+        const player = add([
+            sprite("frisk"),
+            pos(20, 300),
+            anchor("center"),
+            scale(2),
+            area(),
+            body(),
+        ])
+        const map = addLevel([
+            "                                                                                                                                                                          ",
+            "                                                                                                                                                                          ",
+            "         $$$$$$$$$$$$$$$$$$$",
+            "          $$$$$$$$$$$$$$$$$$$",
+            "              $$$$$$$$$$$$$$$$$$$$$$$                  $",
+            "             $                      $                                                                                                                                         ",
+            "            $                       $                                                                                                                                        ",
+            "$$$$$$$$$$$$                        $$   $$$$$$$$  $$",
+            "                                                                                                                                                                          ",
+            "                                                                                                                                                                          ",
+            "                                                                                                                                                                          ",
+            "                                                                                                                                                                          ",
+            "                                                                                                                                                                          ",
+            "$$$$$$$$$$$$",
+            "            $",
+            "            $$",
+            "             $                                                                                                                                                            ",
+            "            $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$",
+
+
+        ], {
+            tileWidth: 24,
+            tileHeight: 24,
+            tiles: {
+                "$": () => [
+                    sprite("hitbox"),
+                    scale(0.4),
+                    area(),
+                    body({ isStatic: true }),
+                ]
+            },
+            
+        })
+        player.onUpdate(() => {
+            if(player.pos.x >320 && player.pos.x < 5120){
+            camPos(player.pos.x, 240)
+            }
+        })
+        const SPEED = 250
+        onKeyDown("down", () => {
+            player.move(0, SPEED)
+            if (player.curAnim() !== "down") {
+                player.play("down")
+            }
+        })
+        
+        onKeyDown("left", () => {
+            player.move(-SPEED, 0)
+            if (player.curAnim() !== "left") {
+                player.play("left")
+            }
+        })
+        onKeyDown("right", () => {
+            player.move(SPEED, 0)
+            if (player.curAnim() !== "right") {
+                player.play("right")
+            }
+        })
+        onKeyDown("up", () => {
+            player.move(0, -SPEED)
+            if (player.curAnim() !== "up") {
+                player.play("up")
+            }
+        });
+        
+        ["left", "right", "up", "down"].forEach((key) => {
+            onKeyRelease(key, () => {
+                if (!isKeyDown("left")) {
+                    player.play("idlel")
+                }
+                if (!isKeyDown("right")) {
+                    player.play("idler")
+                }
+                if (!isKeyDown("up")) {
+                    player.play("idleu")
+                }
+                if (!isKeyDown("down")) {
+                    player.play("idled")
+                }
+            })
+        })
+        ;
+    },
 }
 
 for (const key in scenes) {
     scene(key, scenes[key])
 }
 
-go("1")
+go("4")
