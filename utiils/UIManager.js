@@ -308,6 +308,57 @@ class UI {
             destroyAll("dmgdis");
         });
     }
+    displayDialogOW(dialogText, upOrDown) {
+        
+        let positionTexte = vec2(60,350);
+        let positionBox = vec2(30, 315)
+        if (upOrDown == "up"){
+            positionTexte = vec2(60,50);
+            positionBox = vec2(30, 15)
+        }
+        const box = add([sprite("box2"), pos(positionBox), scale(0.559)]);
+    
+        function segmenterTexte(texte, longueurSegment) {
+            const segments = [];
+            for (let i = 0; i < texte.length; i += longueurSegment) {
+                segments.push(texte.substring(i, i + longueurSegment));
+            }
+            return segments;
+        }
+    
+        const segments = segmenterTexte(dialogText, 90);
+        let currentSegmentIndex = 0;
+    
+        const afficherSegment = () => {
+            if (currentSegmentIndex < segments.length) {
+                if (window.currentTextDisplay) {
+                    destroy(window.currentTextDisplay);
+                }
+                window.currentTextDisplay = this.animerTexte(segments[currentSegmentIndex], positionTexte);
+                currentSegmentIndex++;
+    
+                if (currentSegmentIndex === segments.length) {
+                    console.log("fini");
+                    onKeyPress("z", () => {
+                        destroy(window.currentTextDisplay);
+                        destroy(box);
+                    });
+                }
+            }
+        };
+    
+        // Écouteur d'événement pour passer au segment suivant
+        onKeyPress("z", () => {
+            // Assurez-vous que l'écriture du texte est terminée avant de passer au segment suivant.
+            if (!window.textIsWriting && currentSegmentIndex < segments.length) {
+                afficherSegment();
+            }
+        });
+    
+        // Affiche le premier segment
+        afficherSegment();
+    }
+    
     
     actMenu(enemyName) {
         destroy(window.currentTextDisplay)
@@ -338,6 +389,7 @@ class UI {
     }
     animerTexte(texteComplet, positionTexte) {
         let texteActuel = ""; // Texte actuellement affiché
+        window.textIsWriting = true; // Indique que le texte commence à s'afficher
     
         // Créer un objet de texte initial vide
         const objetTexte = add([
@@ -360,13 +412,17 @@ class UI {
                 wait(0.03, () => {
                     textWrite(index + 1);
                 });
+            } else {
+                // Lorsque toutes les lettres ont été ajoutées, indiquer que l'écriture du texte est terminée
+                window.textIsWriting = false;
             }
         }
     
         // Commencer à ajouter les lettres
         textWrite(0);
-        return objetTexte
+        return objetTexte;
     }
+    
     displayplayerHP(nombre, positionInitiale) {
         for (let i = 0; i < nombre; i++) {
             add([

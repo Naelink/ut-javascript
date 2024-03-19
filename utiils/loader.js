@@ -25,6 +25,7 @@ export const load = {
         loadSprite("attackcursor1", "./assets/attack_cursor1.png")
         loadSprite("snowdin", "./assets/snowdin1.png")
         loadSprite("snowdin2", "./assets/snowdin2.png")
+        loadSprite("bottomtrees1", "./assets/bottomtrees1.png")
         loadSprite("hitbox", "./assets/0.png")
         loadSprite("atk", "./assets/atk1.png", {
             sliceX: 7,

@@ -33,7 +33,7 @@ const scenes = {
         const positionTexte = vec2(60,275);
         const texteStart = "* Papyrus blocks the way!"
         window.currentText = texteStart
-        window.currentTextDisplay = animerTexte(window.currentText, positionTexte)
+        window.currentTextDisplay = UIManager.animerTexte(window.currentText, positionTexte)
         UIManager.init();
         UIManager.displayCombatMenu(enemyName);
         add([text(playerName,{
@@ -54,41 +54,7 @@ const scenes = {
         } ),pos((320+((playermaxHP-20)*1.2)),400)])
         UIManager.displayplayermaxHP(playermaxHP, vec2(280,400))
         UIManager.displayplayerHP(playerHP, vec2(280, 400))
-
-        // Créer un objet de texte initial vide
-        function animerTexte(texteComplet, positionTexte) {
-            let texteActuel = ""; // Texte actuellement affiché
         
-            // Créer un objet de texte initial vide
-            const objetTexte = add([
-                text(texteActuel, {
-                    size: 24, 
-                    font: "deter", 
-                    width: 510, 
-                    lineSpacing: 8
-                }),
-                pos(positionTexte), 
-                color(255, 255, 255),
-            ]);
-        
-            // Fonction interne pour ajouter une lettre au texte actuel et mettre à jour l'objet de texte
-            function textWrite(index) {
-                if (index < texteComplet.length) {
-                    texteActuel += texteComplet[index];
-                    objetTexte.text = texteActuel; // Mettre à jour le texte de l'objet
-                    // Attendre un peu avant d'ajouter la prochaine lettre
-                    wait(0.03, () => {
-                        textWrite(index + 1);
-                    });
-                }
-            }
-        
-            // Commencer à ajouter les lettres
-            textWrite(0);
-            return objetTexte
-        }
-        
-    
     },
     2: () => {
         add([sprite("blackbg")])
@@ -293,41 +259,13 @@ const scenes = {
     3: () => {
     
     },
-    4: () => {
-        add([sprite("snowdin"), pos(0,0), scale(2)])
-        add([sprite("snowdin2"), pos(4096,0), scale(2)])
-        const player = add([
-            sprite("frisk"),
-            pos(20, 300),
-            anchor("center"),
-            scale(2),
-            area(),
-            body(),
-        ])
+    snowdin: () => {
         const map = addLevel([
-            "                                                                                                                                                                          ",
-            "                                                                                                                                                                          ",
-            "         $$$$$$$$$$$$$$$$$$$",
-            "          $$$$$$$$$$$$$$$$$$$",
-            "              $$$$$$$$$$$$$$$$$$$$$$$                  $",
-            "             $                      $                                                                                                                                         ",
-            "            $                       $                                                                                                                                        ",
-            "$$$$$$$$$$$$                        $$   $$$$$$$$  $$",
-            "                                                                                                                                                                          ",
-            "                                                                                                                                                                          ",
-            "                                                                                                                                                                          ",
-            "                                                                                                                                                                          ",
-            "                                                                                                                                                                          ",
-            "$$$$$$$$$$$$",
-            "            $",
-            "            $$",
-            "             $                                                                                                                                                            ",
-            "            $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$",
-
+            ""
 
         ], {
-            tileWidth: 24,
-            tileHeight: 24,
+            tileWidth: 25,
+            tileHeight: 25,
             tiles: {
                 "$": () => [
                     sprite("hitbox"),
@@ -338,16 +276,133 @@ const scenes = {
             },
             
         })
+        
+        add([
+            rect(20, 260), // Mur de gauche
+            pos(-15,170),
+            color(255, 255, 255, 0),
+            body({isStatic: true}),
+            area(),
+            "wall",
+        ]);
+        add([
+            rect(260, 20), // Mur de gauche
+            pos(0,170),
+            color(255, 255, 255, 0),
+            body({isStatic: true}),
+            area(),
+            "wall",
+        ]);
+        add([
+            rect(260, 20), // Mur de gauche
+            pos(0,320),
+            color(255, 255, 255, 0),
+            body({isStatic: true}),
+            area(),
+            "wall",
+        ]);
+        add([
+            rect(240, 20), // Mur de gauche
+            pos(260,175),
+            color(255, 255, 255, 0),
+            body({isStatic: true}),
+            rotate(-45),
+            area(),
+            "wall",
+        ]);
+        
+        add([
+            rect(240, 20), // Mur de gauche
+            pos(270,320),
+            color(255, 255, 255, 0),
+            body({isStatic: true}),
+            rotate(45),
+            area(),
+            "wall",
+        ]);
+        add([
+            rect(430, 20), 
+            pos(380,90),
+            color(255, 255, 255, 0),
+            body({isStatic: true}),
+            area(),
+            "wall",
+        ]);
+        add([
+            rect(20, 100), // mur de gauche chalet de gauche
+            pos(810,90),
+            color(255, 255, 255, 0),
+            body({isStatic: true}),
+            area(),
+            "wall",
+        ]);
+        add([
+            rect(60, 20), // 
+            pos(830,170),
+            color(255, 255, 255, 0),
+            body({isStatic: true}),
+            area(),
+            "wall",
+        ]);
+        add([
+            rect(450, 20), 
+            pos(950,170),
+            color(255, 255, 255, 0),
+            body({isStatic: true}),
+            area(),
+            "wall",
+        ]);
+        add([
+            rect(20, 100), // mur de droite chalet de droite
+            pos(1380,90),
+            color(255, 255, 255, 0),
+            body({isStatic: true}),
+            area(),
+            "wall",
+        ]);
+        add([
+            rect(1780, 20), 
+            pos(1380,90),
+            color(255, 255, 255, 0),
+            body({isStatic: true}),
+            area(),
+            "wall",
+        ]);
+        add([
+            rect(5780, 20), 
+            pos(180,400),
+            color(255, 255, 255, 0),
+            body({isStatic: true}),
+            area(),
+            "wall",
+        ]);
+        
+        add([sprite("snowdin"), pos(0,0), scale(2)])
+        add([sprite("snowdin2"), pos(4096,0), scale(2)])
+        
+        
+        const player = add([
+            sprite("frisk"),
+            pos(20, 260),
+            anchor("center"),
+            scale(2),
+            area(),
+            body(),
+        ])
+        add([sprite("bottomtrees1"), pos(0,0), scale(2)])
+        
         player.onUpdate(() => {
             if(player.pos.x >320 && player.pos.x < 5120){
             camPos(player.pos.x, 240)
             }
         })
-        const SPEED = 250
+        const SPEED = 200
         onKeyDown("down", () => {
             player.move(0, SPEED)
             if (player.curAnim() !== "down") {
                 player.play("down")
+                onKeyRelease("down", () => {
+                    player.play("idled")})
             }
         })
         
@@ -355,38 +410,28 @@ const scenes = {
             player.move(-SPEED, 0)
             if (player.curAnim() !== "left") {
                 player.play("left")
+                onKeyRelease("left", () => {
+                    player.play("idlel")})
             }
         })
         onKeyDown("right", () => {
             player.move(SPEED, 0)
             if (player.curAnim() !== "right") {
                 player.play("right")
+                onKeyRelease("right", () => {
+                    player.play("idler")})
             }
         })
         onKeyDown("up", () => {
             player.move(0, -SPEED)
             if (player.curAnim() !== "up") {
                 player.play("up")
+                onKeyRelease("up", () => {
+                    player.play("idleu")})
             }
         });
-        
-        ["left", "right", "up", "down"].forEach((key) => {
-            onKeyRelease(key, () => {
-                if (!isKeyDown("left")) {
-                    player.play("idlel")
-                }
-                if (!isKeyDown("right")) {
-                    player.play("idler")
-                }
-                if (!isKeyDown("up")) {
-                    player.play("idleu")
-                }
-                if (!isKeyDown("down")) {
-                    player.play("idled")
-                }
-            })
-        })
         ;
+        UIManager.displayDialogOW("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor.", "up")
     },
 }
 
@@ -394,4 +439,4 @@ for (const key in scenes) {
     scene(key, scenes[key])
 }
 
-go("4")
+go("snowdin")
