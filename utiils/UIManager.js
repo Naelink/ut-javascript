@@ -308,56 +308,255 @@ class UI {
             destroyAll("dmgdis");
         });
     }
-    displayDialogOW(dialogText, upOrDown) {
-        
-        let positionTexte = vec2(60,350);
-        let positionBox = vec2(30, 315)
-        if (upOrDown == "up"){
-            positionTexte = vec2(60,50);
-            positionBox = vec2(30, 15)
-        }
-        const box = add([sprite("box2"), pos(positionBox), scale(0.559)]);
+    displayDialogOW(dialogText, upOrDown, hasSprite, Sprite) {
+        window.isInDialog = true
+        let positionTexte = upOrDown === "up" ? vec2(60, 50) : vec2(60, 350);
+        const box = add([sprite("box2"), fixed(), pos(upOrDown === "up" ? vec2(30, 15) : vec2(30, 315),), scale(0.559)]);
     
-        function segmenterTexte(texte, longueurSegment) {
-            const segments = [];
-            for (let i = 0; i < texte.length; i += longueurSegment) {
-                segments.push(texte.substring(i, i + longueurSegment));
-            }
-            return segments;
-        }
-    
-        const segments = segmenterTexte(dialogText, 90);
+        const segments = dialogText.split("|");
         let currentSegmentIndex = 0;
     
-        const afficherSegment = () => {
-            if (currentSegmentIndex < segments.length) {
-                if (window.currentTextDisplay) {
-                    destroy(window.currentTextDisplay);
-                }
-                window.currentTextDisplay = this.animerTexte(segments[currentSegmentIndex], positionTexte);
-                currentSegmentIndex++;
+        const cleanup = () => {
+            destroy(window.dialSprite);
+            destroy(window.currentTextDisplay);
+            destroy(box);
+            debug.log("Dialogue finished.");
+            window.isInDialog = false;
+            window.nextEvent =+ 1
+        };
     
-                if (currentSegmentIndex === segments.length) {
-                    console.log("fini");
-                    onKeyPress("z", () => {
-                        destroy(window.currentTextDisplay);
-                        destroy(box);
-                    });
+        const afficherSegment = () => {
+            if (window.currentTextDisplay) {
+                destroy(window.currentTextDisplay); // Clear the previous text display if it exists
+            }
+    
+            if (currentSegmentIndex < segments.length) {
+                if(hasSprite){
+                    window.currentTextDisplay = this.animerTexteSprite(segments[currentSegmentIndex], positionTexte, Sprite);
                 }
+                else{
+                    window.currentTextDisplay = this.animerTexte(segments[currentSegmentIndex], positionTexte);
+                }
+                
+                currentSegmentIndex++; // Prepare for the next segment
+            } else {
+                // Cleanup after the last segment has been displayed
+                cleanup();
             }
         };
     
-        // Écouteur d'événement pour passer au segment suivant
+        // Listener to move to the next segment when 'Z' is pressed
         onKeyPress("z", () => {
-            // Assurez-vous que l'écriture du texte est terminée avant de passer au segment suivant.
-            if (!window.textIsWriting && currentSegmentIndex < segments.length) {
-                afficherSegment();
+            if(window.textIsWriting == false){
+                afficherSegment()
+            }})
+        // Display the first segment initially
+        afficherSegment();
+    }
+    
+    animerTexte(texteComplet, positionTexte) {
+        let texteActuel = ""; // Texte actuellement affiché
+        window.textIsWriting = true; // Indique que le texte commence à s'afficher
+    
+        // Créer un objet de texte initial vide
+        const objetTexte = add([
+            text("", { size: 24, font: "deter", width: 510, lineSpacing: 8 }),
+            pos(positionTexte),
+            color(255, 255, 255),
+            fixed()
+        ]);
+    
+        const commands = texteComplet.split(/(\/b|\/p)/); // Split the text on /b and /p commands
+        let commandIndex = 0; // Current command index
+    
+        const processNext = () => {
+            if (commandIndex < commands.length) {
+                if (commands[commandIndex] === "/b") {
+                    // Handle line break
+                    texteActuel += "\n";
+                    commandIndex++;
+                    processNext();
+                } else if (commands[commandIndex] === "/p") {
+                    // Handle pause
+                    wait(0.5, () => {
+                        commandIndex++;
+                        processNext();
+                    });
+                } else {
+                    // Handle text
+                    const processText = (text, index) => {
+                        if (index < text.length) {
+                            texteActuel += text[index];
+                            objetTexte.text = texteActuel;
+                            wait(0.03, () => processText(text, index + 1));
+                        } else {
+                            commandIndex++;
+                            processNext();
+                        }
+                    };
+                    processText(commands[commandIndex], 0);
+                }
+            } else {
+                window.textIsWriting = false; // No more commands to process
+            }
+        };
+    
+        processNext(); // Start processing
+        return objetTexte;
+    }
+    animerTexteSprite(texteComplet, positionTexte, Sprite) {
+        let texteActuel = ""; // Texte actuellement affiché
+        window.textIsWriting = true; // Indique que le texte commence à s'afficher
+    
+        // Créer un objet de texte initial vide
+        const objetTexte = add([
+            text("", { size: 24, font: "deter", width: 410, lineSpacing: 8 }),
+            pos(positionTexte.add(vec2(100,0))),
+            color(255, 255, 255),
+            fixed()
+        ]);
+    
+        const commands = texteComplet.split(/(\/b|\/p)/); // Split the text on /b and /p commands
+        let commandIndex = 0; // Current command index
+    
+        const processNext = () => {
+            if (commandIndex < commands.length) {
+                if (commands[commandIndex] === "/b") {
+                    // Handle line break
+                    texteActuel += "\n";
+                    commandIndex++;
+                    processNext();
+                } else if (commands[commandIndex] === "/p") {
+                    // Handle pause
+                    wait(0.5, () => {
+                        commandIndex++;
+                        processNext();
+                    });
+                } else {
+                    // Handle text
+                    const processText = (text, index) => {
+                        if (index < text.length) {
+                            texteActuel += text[index];
+                            objetTexte.text = texteActuel;
+                            wait(0.03, () => processText(text, index + 1));
+                        } else {
+                            commandIndex++;
+                            processNext();
+                        }
+                    };
+                    processText(commands[commandIndex], 0);
+                }
+            } else {
+                window.textIsWriting = false; // No more commands to process
+            }
+        };
+        window.dialSprite = add([
+            sprite(Sprite),
+            pos(60,53),
+            fixed(),
+            scale(1.8),
+        ])
+        dialSprite.play("idle")
+        onUpdate(() => {
+            if (window.textIsWriting == true && dialSprite.curAnim() == "idle") {
+                dialSprite.play("talk")
+            }
+            else if (window.textIsWriting == false && dialSprite !== "idle"){
+                dialSprite.play("idle")
             }
         });
     
-        // Affiche le premier segment
+        processNext(); // Start processing
+        return objetTexte;
+    }
+    displayDialogFight(dialogText, position) {
+        window.isInDialog = true
+        const box = add([sprite("textbubble"), fixed(), pos(position), scale(1)]);
+    
+        const segments = dialogText.split("|");
+        let currentSegmentIndex = 0;
+    
+        const cleanup = () => {
+            destroy(window.currentTextDisplay);
+            destroy(box);
+            debug.log("Dialogue finished.");
+            window.isInDialog = false;
+            window.nextEvent =+ 1
+        };
+    
+        const afficherSegment = () => {
+            if (window.currentTextDisplay) {
+                destroy(window.currentTextDisplay); // Clear the previous text display if it exists
+            }
+    
+            if (currentSegmentIndex < segments.length) {
+                    window.currentTextDisplay = this.animerTexteFight(segments[currentSegmentIndex], position);
+                currentSegmentIndex++; // Prepare for the next segment
+            } else {
+                // Cleanup after the last segment has been displayed
+                cleanup();
+            }
+        };
+    
+        // Listener to move to the next segment when 'Z' is pressed
+        onKeyPress("z", () => {
+            if(window.textIsWriting == false){
+                afficherSegment()
+            }})
+        // Display the first segment initially
         afficherSegment();
     }
+    animerTexteFight(texteComplet, positionTexte) {
+        let texteActuel = ""; // Texte actuellement affiché
+        window.textIsWriting = true; // Indique que le texte commence à s'afficher
+    
+        // Créer un objet de texte initial vide
+        const objetTexte = add([
+            text("", { size: 13, font: "plain", width: 200, lineSpacing: 8 }),
+            pos(positionTexte.add(vec2(40,10))),
+            color(0, 0, 0),
+            fixed()
+        ]);
+    
+        const commands = texteComplet.split(/(\/b|\/p)/); // Split the text on /b and /p commands
+        let commandIndex = 0; // Current command index
+    
+        const processNext = () => {
+            if (commandIndex < commands.length) {
+                if (commands[commandIndex] === "/b") {
+                    // Handle line break
+                    texteActuel += "\n";
+                    commandIndex++;
+                    processNext();
+                } else if (commands[commandIndex] === "/p") {
+                    // Handle pause
+                    wait(0.5, () => {
+                        commandIndex++;
+                        processNext();
+                    });
+                } else {
+                    // Handle text
+                    const processText = (text, index) => {
+                        if (index < text.length) {
+                            texteActuel += text[index];
+                            objetTexte.text = texteActuel;
+                            wait(0.03, () => processText(text, index + 1));
+                        } else {
+                            commandIndex++;
+                            processNext();
+                        }
+                    };
+                    processText(commands[commandIndex], 0);
+                }
+            } else {
+                window.textIsWriting = false; // No more commands to process
+            }
+        };
+    
+        processNext(); // Start processing
+        return objetTexte;
+    }
+    
     
     
     actMenu(enemyName) {
@@ -387,41 +586,7 @@ class UI {
         console.log(`Displaying combat menu for ${this.enemyName}`);
         // Additional setup if needed
     }
-    animerTexte(texteComplet, positionTexte) {
-        let texteActuel = ""; // Texte actuellement affiché
-        window.textIsWriting = true; // Indique que le texte commence à s'afficher
     
-        // Créer un objet de texte initial vide
-        const objetTexte = add([
-            text(texteActuel, {
-                size: 24, 
-                font: "deter", 
-                width: 510, 
-                lineSpacing: 8
-            }),
-            pos(positionTexte), 
-            color(255, 255, 255),
-        ]);
-    
-        // Fonction interne pour ajouter une lettre au texte actuel et mettre à jour l'objet de texte
-        function textWrite(index) {
-            if (index < texteComplet.length) {
-                texteActuel += texteComplet[index];
-                objetTexte.text = texteActuel; // Mettre à jour le texte de l'objet
-                // Attendre un peu avant d'ajouter la prochaine lettre
-                wait(0.03, () => {
-                    textWrite(index + 1);
-                });
-            } else {
-                // Lorsque toutes les lettres ont été ajoutées, indiquer que l'écriture du texte est terminée
-                window.textIsWriting = false;
-            }
-        }
-    
-        // Commencer à ajouter les lettres
-        textWrite(0);
-        return objetTexte;
-    }
     
     displayplayerHP(nombre, positionInitiale) {
         for (let i = 0; i < nombre; i++) {
@@ -440,6 +605,82 @@ class UI {
                 color(255, 0, 0), // Définit la couleur de la barre en jaune (RGB)
             ]);
         }
+    }
+    playerManager(spawnPoint){
+        window.player = add([
+            sprite("frisk"),
+            pos(spawnPoint),
+            scale(2),
+            area(),
+            body(),
+        ])
+        const SPEED = 200
+        onKeyDown("down", () => {
+            if (window.isInDialog != true) {
+            player.move(0, SPEED)
+            if (player.curAnim() !== "down") {
+                player.play("down")
+                onKeyRelease("down", () => {
+                    player.play("idled")})
+            }
+        }
+        })
+        
+        onKeyDown("left", () => {
+            if (window.isInDialog != true) {
+            player.move(-SPEED, 0)
+            if (player.curAnim() !== "left") {
+                player.play("left")
+                onKeyRelease("left", () => {
+                    player.play("idlel")})
+            }
+        }
+        })
+        onKeyDown("right", () => {
+            if (window.isInDialog != true) {
+            player.move(SPEED, 0)
+            if (player.curAnim() !== "right") {
+                player.play("right")
+                onKeyRelease("right", () => {
+                    player.play("idler")})
+            }
+        }
+        })
+        onKeyDown("up", () => {
+            if (window.isInDialog != true) {
+            player.move(0, -SPEED)
+            if (player.curAnim() !== "up") {
+                player.play("up")
+                onKeyRelease("up", () => {
+                    player.play("idleu")})
+            }
+        }
+        })
+    }
+    heartManager(){
+        const SPEED = 150
+        window.heart = add ([
+            sprite("heart"),
+            pos(302, 310),
+            area(),
+            body(),
+            {position:"fight"}
+        ])
+        onKeyDown("left", () => {
+            heart.move(-SPEED, 0)
+        })
+        
+        onKeyDown("right", () => {
+            heart.move(SPEED, 0)
+        })
+        
+        onKeyDown("up", () => {
+            heart.move(0, -SPEED)
+        })
+        
+        onKeyDown("down", () => {
+            heart.move(0, SPEED)
+        })
     }
     
 }

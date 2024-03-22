@@ -5,6 +5,7 @@ export const load = {
         loadFont("hp", "./assets/ut-hp-font.ttf")
         loadFont("dmg", "./assets/undertale-damage.ttf")
         loadFont("dmg2", "./assets/undertale-attack-font.ttf")
+        loadFont("plain", "./assets/plain.ttf")
     },
     assets: () => {
         loadSprite("blackbg", "./assets/blackbg.png")
@@ -23,6 +24,8 @@ export const load = {
         loadSprite("attackbar", "./assets/attack_bar.png")
         loadSprite("attackcursor", "./assets/attack_cursor.png")
         loadSprite("attackcursor1", "./assets/attack_cursor1.png")
+        loadSprite("ruins_1", "./assets/ruins_1.png")
+        loadSprite("ruins_2", "./assets/ruins_2.png")
         loadSprite("snowdin", "./assets/snowdin1.png")
         loadSprite("snowdin2", "./assets/snowdin2.png")
         loadSprite("bottomtrees1", "./assets/bottomtrees1.png")
@@ -45,26 +48,26 @@ export const load = {
                     // Starts from frame 0, ends at frame 3
                     from: 0,
                     to: 3,
-                    speed: 4,
+                    speed: 6,
                     loop : true
                 },
                 "left": {
                     // Starts from frame 0, ends at frame 3
                     from: 4,
                     to: 5,
-                    speed: 4,
+                    speed: 6,
                     loop : true
                 },
                 "right": {
                     from: 6,
                     to: 7,
-                    speed: 4,
+                    speed: 6,
                     loop : true
                 },
                 "up": {
                     from: 8,
                     to: 11,
-                    speed: 4,
+                    speed: 6,
                     loop : true
                 },
                 "idled": {
@@ -85,7 +88,34 @@ export const load = {
                 },
             }
         })
+        loadSprite("flowey", "./assets/flowey.png", {
+            sliceX: 8,
+            anims: {
+                "idle": {
+                    from: 0,
+                    to: 0,
+                    speed: 6,
+                    loop : true
+                },
+                "talk": {
+                    from: 0,
+                    to: 1,
+                    speed: 6,
+                    loop : true
+                },
+            }
+        })
+        loadSprite("floweyow", "./assets/floweyow.png", {
+            sliceX: 10,
+            anims: {
+                "idle": {
+                    from: 0,
+                    to: 0,
+                }
+            }
+        })
         loadSprite("miss", "./assets/miss.png")
+        loadSprite("textbubble", "./assets/textbubble.png")
         loadSound("uimove", "./assets/ui bip.mp3")
         
     

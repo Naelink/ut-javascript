@@ -15,7 +15,7 @@ import { UIManager } from "./utiils/UIManager.js"
 let playerName="Nael"
 let playerLV = 1
 let playermaxHP = 20
-let playerHP = 17
+let playerHP = 20
 window.BossHP = 680
 window.BossMaxHP = 680
 
@@ -31,7 +31,7 @@ const scenes = {
         add([sprite("blackbg")])
         add([sprite("papyrus"), scale(2),pos(250,40)])
         const positionTexte = vec2(60,275);
-        const texteStart = "* Papyrus blocks the way!"
+        const texteStart = "* Papyrus blocks the way!/b/p* And he says you smell bad!"
         window.currentText = texteStart
         window.currentTextDisplay = UIManager.animerTexte(window.currentText, positionTexte)
         UIManager.init();
@@ -256,8 +256,290 @@ const scenes = {
         });
     
     },
-    3: () => {
+    ruins_1: () => {
+        add([
+            rect(300, 20), // Mur du haut
+            pos(150,60),
+            color(255, 255, 255, 0),
+            body({isStatic: true}),
+            area(),
+            "wall",
+        ]);
+        add([
+            rect(20, 200), // Mur de gauche
+            pos(20,160),
+            color(255, 255, 255, 0),
+            body({isStatic: true}),
+            area(),
+            "wall",
+        ]);
+        add([
+            rect(20, 200), // Mur de gauche
+            pos(560,80),
+            color(255, 255, 255, 0),
+            body({isStatic: true}),
+            area(),
+            "wall",
+        ]);
+        add([
+            rect(20, 200), // Mur de gauche
+            pos(1310,280),
+            color(255, 255, 255, 0),
+            body({isStatic: true}),
+            area(),
+            "wall",
+        ]);
+        add([
+            rect(150, 20), // Mur diagonal hautgauche
+            pos(20,140),
+            color(255, 255, 255, 0),
+            body({isStatic: true}),
+            area(),
+            rotate(-45),
+            "wall",
+        ]);
+        add([
+            rect(150, 20), // Mur diagonal basdroite
+            pos(400,510),
+            color(255, 255, 255, 0),
+            body({isStatic: true}),
+            area(),
+            rotate(-45),
+            "wall",
+        ]);
+        add([
+            rect(150, 20), // Mur diagonal basgauche
+            pos(40,340),
+            color(255, 255, 255, 0),
+            body({isStatic: true}),
+            area(),
+            rotate(45),
+            "wall",
+        ]);
+        add([
+            rect(150, 20), // Mur diagonal hautdroite
+            pos(470,60),
+            color(255, 255, 255, 0),
+            body({isStatic: true}),
+            area(),
+            rotate(45),
+            "wall",
+        ]);
+        add([
+            rect(300, 20), // Mur du haut couloir
+            pos(150,460),
+            color(255, 255, 255, 0),
+            body({isStatic: true}),
+            area(),
+            "wall",
+        ]);
+        add([
+            rect(600, 20), // Mur du haut couloir
+            pos(600,255),
+            color(255, 255, 255, 0),
+            body({isStatic: true}),
+            area(),
+            "wall",
+        ]);
+        add([
+            rect(900, 20), // Mur du bas couloir
+            pos(500,400),
+            color(255, 255, 255, 0),
+            body({isStatic: true}),
+            area(),
+            "wall",
+        ]);
+        add([
+            rect(600, 20), // Mur droite couloir
+            pos(1280,255),
+            color(255, 255, 255, 0),
+            body({isStatic: true}),
+            area(),
+            "wall",
+        ]);
+        add([
+            rect(100, 20), // htbox porte
+            pos(1200,240),
+            color(255, 0, 255, 0),
+            body({isStatic: true}),
+            area(),
+            "hitboxporte",
+        ]);
+        add([sprite("ruins_1"), pos(0, 0), scale(2)])
+        if(window.currentRoom == "ruins_2"){
+            UIManager.playerManager(vec2(1220,290))
+            const limitUp = 240
+            const limitDown = 270
+            const limitLeft = 330
+            const limitRight = 1040
+            let playerX = 1040
+            let playerY = 255
+            window.player.onUpdate(() => {
+                camPos(playerX, playerY)
+            })
+            window.player.onUpdate(() => {
+                if(player.pos.y > limitUp && player.pos.y < limitDown){
+                playerY = player.pos.y
+                }
+                if(player.pos.x > limitLeft && player.pos.x < limitRight){
+                    playerX = player.pos.x 
+                }
+            })
+        }
+        else{UIManager.playerManager(vec2(280,235))
+            const limitUp = 210
+            const limitDown = 250
+            const limitLeft = 280
+            const limitRight = 995
+            let playerX = player.pos.x
+            let playerY = player.pos.y
+            window.player.onUpdate(() => {
+                camPos(playerX+45, playerY+30)
+            })
+            window.player.onUpdate(() => {
+                if(player.pos.y > limitUp && player.pos.y < limitDown){
+                playerY = player.pos.y
+                }
+                if(player.pos.x > limitLeft && player.pos.x < limitRight){
+                    playerX = player.pos.x 
+                }
+            })
+        }
+        
+        player.onCollide('hitboxporte', () => {
+            go("ruins_2")
+        })
+    },
+    ruins_2: () => {
+        window.nextEvent = 0
+        const hitboxdialog = add([
+            rect(300, 20), // htbox porte
+            pos(175,300),
+            color(255, 0, 255, 0),
+            body({isStatic: true}),
+            area(),
+            "hitboxdialog",
+        ]);
+        add([sprite("ruins_2"), pos(0, -350), scale(2.01)])
+        const floweyow = add([sprite("floweyow"), pos(295, 215), scale(2)])
+        UIManager.playerManager(vec2(305,455))
+        player.play("idleu")
+        const limitUp = 0
+        const limitDown = 295
+        const limitLeft = 280
+        const limitRight = 995
+        const playerX = player.pos.x
+        let playerY = player.pos.y
+        const hitboxback = add([
+            rect(300, 20), // htbox porte
+            pos(175,520),
+            color(255, 0, 255, 0),
+            body({isStatic: true}),
+            area(),
+            "hitboxback",
+        ]);
+        window.player.onUpdate(() => {
+            camPos(playerX+16, playerY-162)
+        })
+        window.player.onUpdate(() => {
+            if(player.pos.y > limitUp && player.pos.y < limitDown){
+            playerY = player.pos.y + 162
+            }
+        })
+        player.onCollide('hitboxdialog', () => {
+            UIManager.displayDialogOW("* Howdy ! /b/p* I'm FLOWEY./b/p* FLOWEY the FLOWER!|* Hmmm...|* You're new to the /b UNDERGROUD,/p aren'tcha ?|* Golly,/p you must be so confused.|* Someone ought to teach you how things work around here!|* I guess little old me will have to do.|* Ready ? /p /b* Here we go !"
+            , "up", true, "flowey")
+        })
+        onUpdate(() => {
+            if(window.nextEvent == 1){
+                wait(0.636, () => {go("flowey_tuto")})
+        }})
+        
+        player.onCollide('hitboxback', () => {
+            window.currentRoom = "ruins_2"
+            go("ruins_1")
+        })
+
+    },
+    flowey_tuto: () => {
+        add([sprite("blackbg")])
+        add([sprite("flowey"), scale(2),pos(280,140)])
+        add([text("lv " + playerLV ,{
+            size:22,
+            font:"trouble",
+        } ),pos(198,398)])
+        add([text("HP" ,{
+            size:10,
+            font:"HP",
+        } ),pos(270,404)])
+        add([text(playerHP + " / " + playermaxHP,{
+            size:20,
+            font:"trouble",
+        } ),pos((340+((playermaxHP-20)*1.2)),400)])
+        const contour = add([
+            rect(150 + 5*2, 125 + 5*2),
+            pos(242 - 5, 257 - 5),
+            color(255, 255, 255),
+            area(),
+            "border"
+        ]);
+        
+        // Intérieur de la boîte (initial)
+        const interieur = add([
+            rect(150, 125),
+            pos(242, 257),
+            color(0, 0, 0),
+        ]);
+        function updateWalls() {
+            // Supprimer les murs existants pour les recréer
+            destroyAll("wall");
     
+            // Épaisseur des murs
+            const epaisseurMur = 5;
+    
+            // Création des murs en fonction des dimensions de 'interieur'
+            add([
+                rect(interieur.width, epaisseurMur), // Mur du haut
+                pos(interieur.pos.x, interieur.pos.y - epaisseurMur),
+                color(255, 255, 255, 0),
+                body({isStatic: true}),
+                area(),
+                "wall",
+            ]);
+            add([
+                rect(interieur.width, epaisseurMur), // Mur du bas
+                pos(interieur.pos.x, interieur.pos.y + interieur.height),
+                color(255, 255, 255, 0),
+                body({isStatic: true}),
+                area(),
+                "wall",
+            ]);
+            add([
+                rect(epaisseurMur, interieur.height + 2 * epaisseurMur), // Mur de gauche
+                pos(interieur.pos.x - epaisseurMur, interieur.pos.y - epaisseurMur),
+                color(255, 255, 255, 0),
+                body({isStatic: true}),
+                area(),
+                "wall",
+            ]);
+            add([
+                rect(epaisseurMur, interieur.height + 2 * epaisseurMur), // Mur de droite
+                pos(interieur.pos.x + interieur.width, interieur.pos.y - epaisseurMur),
+                color(255, 255, 255, 0),
+                body({isStatic: true}),
+                area(),
+                "wall",
+            ]);
+        }
+        updateWalls()
+        UIManager.heartManager()
+        UIManager.displayplayermaxHP(playermaxHP, vec2(303, 398))
+        UIManager.displayplayerHP(playerHP, vec2(303, 398))
+        window.nextEvent = 0
+        UIManager.displayDialogFight("See that heart ?/p/bThat is your SOUL,/p/bthe very culmination of your being! |Your SOUL starts off weak,/p but can grow stronger if you gain a lot of LV.|What's LV stand for ?/p/bWhy,/p LOVE,/p of course!|You want some LOVE,/p don't you ?|Don't worry,/p I'll share some with you!", vec2(370,135))
+        if(window.nextEvent ==1){
+
+        }
     },
     snowdin: () => {
         const map = addLevel([
@@ -381,62 +663,28 @@ const scenes = {
         add([sprite("snowdin2"), pos(4096,0), scale(2)])
         
         
-        const player = add([
-            sprite("frisk"),
-            pos(20, 260),
-            anchor("center"),
-            scale(2),
-            area(),
-            body(),
-        ])
         add([sprite("bottomtrees1"), pos(0,0), scale(2)])
         
-        player.onUpdate(() => {
+        UIManager.playerManager()
+        window.player.onUpdate(() => {
             if(player.pos.x >320 && player.pos.x < 5120){
             camPos(player.pos.x, 240)
             }
         })
-        const SPEED = 200
-        onKeyDown("down", () => {
-            player.move(0, SPEED)
-            if (player.curAnim() !== "down") {
-                player.play("down")
-                onKeyRelease("down", () => {
-                    player.play("idled")})
-            }
-        })
-        
-        onKeyDown("left", () => {
-            player.move(-SPEED, 0)
-            if (player.curAnim() !== "left") {
-                player.play("left")
-                onKeyRelease("left", () => {
-                    player.play("idlel")})
-            }
-        })
-        onKeyDown("right", () => {
-            player.move(SPEED, 0)
-            if (player.curAnim() !== "right") {
-                player.play("right")
-                onKeyRelease("right", () => {
-                    player.play("idler")})
-            }
-        })
-        onKeyDown("up", () => {
-            player.move(0, -SPEED)
-            if (player.curAnim() !== "up") {
-                player.play("up")
-                onKeyRelease("up", () => {
-                    player.play("idleu")})
-            }
-        });
-        ;
-        UIManager.displayDialogOW("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor.", "up")
-    },
-}
+;   
+    window.isInDialog = false
+    UIManager.displayDialogOW("* Howdy ! /b/p* I'm FLOWEY./b/p* FLOWEY the FLOWER!", "up", true)
+    UIManager.displayDialogOW("* Howdy ! /b/p* I'm FLOWEY./b/p* FLOWEY the FLOWER!", "up", true)
+
+
+
+        },
+    }
+    
+    
 
 for (const key in scenes) {
     scene(key, scenes[key])
 }
 
-go("snowdin")
+go("ruins_1")
