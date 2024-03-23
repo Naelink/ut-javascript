@@ -97,6 +97,10 @@ export const load = {
                     speed: 6,
                     loop : true
                 },
+                "wink": {
+                    from: 2,
+                    to: 2
+                },
                 "talk": {
                     from: 0,
                     to: 1,
@@ -114,6 +118,7 @@ export const load = {
                 }
             }
         })
+        loadSprite("wink", "./assets/winkstar.png")
         loadSprite("miss", "./assets/miss.png")
         loadSprite("textbubble", "./assets/textbubble.png")
         loadSound("uimove", "./assets/ui bip.mp3")

@@ -500,7 +500,7 @@ class UI {
     
         // Listener to move to the next segment when 'Z' is pressed
         onKeyPress("z", () => {
-            if(window.textIsWriting == false){
+            if(window.textIsWriting == false && window.isInDialog){
                 afficherSegment()
             }})
         // Display the first segment initially

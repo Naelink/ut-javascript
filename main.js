@@ -463,7 +463,8 @@ const scenes = {
     },
     flowey_tuto: () => {
         add([sprite("blackbg")])
-        add([sprite("flowey"), scale(2),pos(280,140)])
+        const floweyspritetuto = add([sprite("flowey"), scale(2),pos(280,140)])
+        floweyspritetuto.play("idle")
         add([text("lv " + playerLV ,{
             size:22,
             font:"trouble",
@@ -536,10 +537,76 @@ const scenes = {
         UIManager.displayplayermaxHP(playermaxHP, vec2(303, 398))
         UIManager.displayplayerHP(playerHP, vec2(303, 398))
         window.nextEvent = 0
-        UIManager.displayDialogFight("See that heart ?/p/bThat is your SOUL,/p/bthe very culmination of your being! |Your SOUL starts off weak,/p but can grow stronger if you gain a lot of LV.|What's LV stand for ?/p/bWhy,/p LOVE,/p of course!|You want some LOVE,/p don't you ?|Don't worry,/p I'll share some with you!", vec2(370,135))
-        if(window.nextEvent ==1){
+        const eventdis = add([
+            text(window.nextEvent.toString(), {
+                size: 34,
+                font: "deter",
+                width: 510,
+                lineSpacing: 8
+            }),
+            pos(50, 180),
+            color(255, 255, 255)
+        ]);
+        const updateScore = () => {
+            eventdis.text = window.nextEvent.toFixed(2);
+        };
+        onUpdate(() => {
+            eventdis.use(text(window.nextEvent.toString()))
+        });
+        function dialog1(){ UIManager.displayDialogFight("See that heart ?/p/bThat is your SOUL,/p/bthe very culmination of your being! |Your SOUL starts off weak,/p but can grow stronger if you gain a lot of LV.|What's LV stand for ?/p/bWhy,/p LOVE,/p of course!|You want some LOVE,/p don't you ?|Don't worry,/p I'll share some with you!", vec2(370,135))
+        onUpdate(() => {
+            if (window.textIsWriting == true && floweyspritetuto.curAnim() == "idle") {
+                floweyspritetuto.play("talk")
+            }
+            else if (window.textIsWriting == false && floweyspritetuto.curAnim() !== "idle"){
+                floweyspritetuto.play("idle")
+            }
+        })
+        if(window.nextEvent == 2){
+            return;
+        };}
+        dialog1()
+        onUpdate(() => {
+            if(window.nextEvent == 1){
+                const wink = add([
+                    sprite("wink"), // Replace "yourSprite" with your sprite name
+                    pos(circleCenter.x, circleCenter.y),
+                    rotate(0),
+                    move(340,50),
+                    anchor("center"),
+                    opacity(1),
+                    lifespan(0.6, { fade: 0.5 }),
+                    "wink"
+                ]);
+                wink.onUpdate(() => {
+                    // .angle is a property provided by rotate() component, here we're incrementing the angle by 120 degrees per second, dt() is the time elapsed since last frame in seconds
+                    wink.angle += 120 * dt()
+                })
+                floweyspritetuto.play("wink")
+                window.nextEvent =2
+        }})
+        let isDialogTriggered = false; // Variable pour contrôler si le dialogue a déjà été lancé
 
-        }
+        onUpdate(() => {
+            if(window.nextEvent == 2 && !isDialogTriggered){
+                isDialogTriggered = true; // Marquez que le dialogue est lancé pour ne pas répéter cette action
+                wait(0.8, () => {
+                    UIManager.displayDialogFight("Down here,/p LOVE is shared through.../p|Little white.../p/b'friendliness /bpellets.'|Are you ready ?", vec2(370,135));
+                });
+            }
+        });
+
+
+        const circleCenter = vec2(350, 140);
+        const radius = 100;
+        let angle = 0;
+        const speed = 0.05; // How fast the object moves around the circle
+
+        // Create the object you want to move in a circle
+        
+        
+                
+            
     },
     snowdin: () => {
         const map = addLevel([
@@ -687,4 +754,4 @@ for (const key in scenes) {
     scene(key, scenes[key])
 }
 
-go("ruins_1")
+go("flowey_tuto")
