@@ -107,6 +107,16 @@ export const load = {
                     speed: 6,
                     loop : true
                 },
+                "talkside":{
+                    from: 3,
+                    to: 4,
+                    speed: 6,
+                    loop : true
+                },
+                "idleside":{
+                    from: 3,
+                    to: 3,
+                }
             }
         })
         loadSprite("floweyow", "./assets/floweyow.png", {
@@ -115,6 +125,17 @@ export const load = {
                 "idle": {
                     from: 0,
                     to: 0,
+                }
+            }
+        })
+        loadSprite("pellets", "./assets/pellets.png", {
+            sliceX: 2,
+            anims: {
+                "spin": {
+                    from: 0,
+                    to: 1,
+                    speed: 14,
+                    loop : true
                 }
             }
         })

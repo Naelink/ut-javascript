@@ -469,41 +469,60 @@ class UI {
         processNext(); // Start processing
         return objetTexte;
     }
-    displayDialogFight(dialogText, position) {
-        window.isInDialog = true
-        const box = add([sprite("textbubble"), fixed(), pos(position), scale(1)]);
+    displayDialogFight(dialogText, position, onComplete) {
+        if (window.isInDialog) {
+            console.log("A dialogue is already in progress.");
+            return;
+        }
     
+        window.isInDialog = true;
+        const box = add([sprite("textbubble"), fixed(), pos(position), scale(1)]);
         const segments = dialogText.split("|");
         let currentSegmentIndex = 0;
     
-        const cleanup = () => {
-            destroy(window.currentTextDisplay);
-            destroy(box);
-            debug.log("Dialogue finished.");
-            window.isInDialog = false;
-            window.nextEvent =+ 1
-        };
+        // Ensure any existing key press handler is canceled before setting up a new one
+        if (currentKeyPressHandler) {
+            currentKeyPressHandler.cancel();
+        }
     
         const afficherSegment = () => {
             if (window.currentTextDisplay) {
-                destroy(window.currentTextDisplay); // Clear the previous text display if it exists
+                destroy(window.currentTextDisplay);
             }
-    
             if (currentSegmentIndex < segments.length) {
-                    window.currentTextDisplay = this.animerTexteFight(segments[currentSegmentIndex], position);
-                currentSegmentIndex++; // Prepare for the next segment
+                window.currentTextDisplay = this.animerTexteFight(segments[currentSegmentIndex], position);
+                currentSegmentIndex++;
             } else {
-                // Cleanup after the last segment has been displayed
                 cleanup();
             }
         };
     
-        // Listener to move to the next segment when 'Z' is pressed
-        onKeyPress("z", () => {
-            if(window.textIsWriting == false && window.isInDialog){
-                afficherSegment()
-            }})
-        // Display the first segment initially
+        const cleanup = () => {
+            if (window.currentTextDisplay) {
+                destroy(window.currentTextDisplay);
+                window.currentTextDisplay = null;
+            }
+            destroy(box);
+            window.nextEvent = window.nextEvent + 1;
+            console.log("Dialogue finished.");
+            window.isInDialog = false;
+            if (typeof onComplete === 'function') {
+                onComplete();
+            }
+            // Cancel the key press handler as part of cleanup
+            if (currentKeyPressHandler) {
+                currentKeyPressHandler.cancel();
+                currentKeyPressHandler = null;
+            }
+        };
+    
+        // Setup the key press handler and keep a reference to it
+        currentKeyPressHandler = onKeyPress("z", () => {
+            if (!window.textIsWriting && window.isInDialog) {
+                afficherSegment();
+            }
+        });
+    
         afficherSegment();
     }
     animerTexteFight(texteComplet, positionTexte) {

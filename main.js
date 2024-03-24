@@ -553,60 +553,101 @@ const scenes = {
         onUpdate(() => {
             eventdis.use(text(window.nextEvent.toString()))
         });
-        function dialog1(){ UIManager.displayDialogFight("See that heart ?/p/bThat is your SOUL,/p/bthe very culmination of your being! |Your SOUL starts off weak,/p but can grow stronger if you gain a lot of LV.|What's LV stand for ?/p/bWhy,/p LOVE,/p of course!|You want some LOVE,/p don't you ?|Don't worry,/p I'll share some with you!", vec2(370,135))
-        onUpdate(() => {
-            if (window.textIsWriting == true && floweyspritetuto.curAnim() == "idle") {
-                floweyspritetuto.play("talk")
-            }
-            else if (window.textIsWriting == false && floweyspritetuto.curAnim() !== "idle"){
-                floweyspritetuto.play("idle")
-            }
-        })
-        if(window.nextEvent == 2){
-            return;
-        };}
-        dialog1()
-        onUpdate(() => {
-            if(window.nextEvent == 1){
-                const wink = add([
-                    sprite("wink"), // Replace "yourSprite" with your sprite name
-                    pos(circleCenter.x, circleCenter.y),
-                    rotate(0),
-                    move(340,50),
-                    anchor("center"),
-                    opacity(1),
-                    lifespan(0.6, { fade: 0.5 }),
-                    "wink"
-                ]);
-                wink.onUpdate(() => {
-                    // .angle is a property provided by rotate() component, here we're incrementing the angle by 120 degrees per second, dt() is the time elapsed since last frame in seconds
-                    wink.angle += 120 * dt()
-                })
-                floweyspritetuto.play("wink")
-                window.nextEvent =2
-        }})
-        let isDialogTriggered = false; // Variable pour contrôler si le dialogue a déjà été lancé
+        window.currentKeyPressHandler = null
+        function dialog1(onComplete) {
+            UIManager.displayDialogFight("See that heart ?/bThat is your SOUL,|Your SOUL starts off weak.", vec2(370,135), onComplete)
+            const talk1 = onUpdate(() => {
+                if (window.textIsWriting == true && floweyspritetuto.curAnim() == "idle") {
+                    floweyspritetuto.play("talk")
+                }
+                else if (window.textIsWriting == false && floweyspritetuto.curAnim() !== "idle"){
+                    floweyspritetuto.play("idle")
+                }
+                if(window.nextEvent > 0){
+                    talk1.cancel()
+                };
+            })
 
-        onUpdate(() => {
-            if(window.nextEvent == 2 && !isDialogTriggered){
-                isDialogTriggered = true; // Marquez que le dialogue est lancé pour ne pas répéter cette action
-                wait(0.8, () => {
-                    UIManager.displayDialogFight("Down here,/p LOVE is shared through.../p|Little white.../p/b'friendliness /bpellets.'|Are you ready ?", vec2(370,135));
-                });
-            }
-        });
-
-
-        const circleCenter = vec2(350, 140);
-        const radius = 100;
-        let angle = 0;
-        const speed = 0.05; // How fast the object moves around the circle
-
-        // Create the object you want to move in a circle
-        
-        
-                
+        }
+        function animateWink(onComplete) {
+            wait(0.1, () => {
+            const circleCenter = vec2(350, 140);
+            const wink = add([
+                sprite("wink"),
+                pos(circleCenter),
+                rotate(0),
+                move(340,50),
+                anchor("center"),
+                opacity(1),
+                lifespan(0.6, { fade: 0.5 }), // Assume animation lasts for 0.6 seconds
+                "wink"
+            ]);
             
+            wink.onUpdate(() => {
+                wink.angle += 120 * dt();
+            });
+            floweyspritetuto.play("wink");
+            wink.onDestroy(() => {
+                onComplete();
+            });
+        })
+        }
+        function dialog2(onComplete) {
+            window.textIsWriting = false
+            window.isInDialog = false
+            floweyspritetuto.play("idleside");
+            const talk2 = onUpdate(() => {
+                if (window.textIsWriting == true && floweyspritetuto.curAnim() == "idleside") {
+                    floweyspritetuto.play("talkside")
+                }
+                else if (window.textIsWriting == false && floweyspritetuto.curAnim() !== "idleside"){
+                    floweyspritetuto.play("idleside")
+                }
+                if(window.nextEvent > 1){
+                    talk2.cancel()
+                };
+            })
+            spawnPellets()
+            UIManager.displayDialogFight("Down here,/p LOVE is shared through.../p|Little white.../p/b'friendliness /bpellets.'|Are you ready ?", vec2(370,135), onComplete)
+            
+        }
+        function spawnPellets(){
+            window.pellet1 = add([sprite("pellets"), scale(1),pos(310,160), area(), "pellet"])
+            pellet1.play("spin")
+            tween(pellet1.pos, vec2(200, 110), 1, (p) => pellet1.pos = p, easings.linear)
+            window.pellet2 = add([sprite("pellets"), scale(1),pos(310,160), area(), "pellet"])
+            pellet2.play("spin")
+            tween(pellet2.pos, vec2(245, 65), 1, (p) => pellet2.pos = p, easings.linear)
+            window.pellet3 = add([sprite("pellets"), scale(1),pos(310,160), area(), "pellet"])
+            pellet3.play("spin")
+            tween(pellet3.pos, vec2(310, 45), 1, (p) => pellet3.pos = p, easings.linear)
+            window.pellet4 = add([sprite("pellets"), scale(1),pos(310,160), area(), "pellet"])
+            pellet4.play("spin")
+            tween(pellet4.pos, vec2(380, 65), 1, (p) => pellet4.pos = p, easings.linear)
+            window.pellet5 = add([sprite("pellets"), scale(1),pos(310,160), area(), "pellet"])
+            pellet5.play("spin")
+            tween(pellet5.pos, vec2(420, 110), 1, (p) => pellet5.pos = p, easings.linear)
+        }
+        function sendPellets(){
+            UIManager.displayDialogFight("Move around! /p/bGet as many as you can!", vec2(370,135))
+            pellet1.use(move(heart.pos.angle(pellet1.pos), 100))
+            pellet2.use(move(heart.pos.angle(pellet2.pos), 100))
+            pellet3.use(move(heart.pos.angle(pellet3.pos), 100))
+            pellet4.use(move(heart.pos.angle(pellet4.pos), 100))
+            pellet5.use(move(heart.pos.angle(pellet5.pos), 100))
+        }
+        function startSequence() {
+            dialog1(() => {
+                animateWink(() => {
+                    dialog2(() => {
+                        sendPellets(() => {
+
+                        })
+                    });
+                });
+            });
+        }
+        startSequence()
     },
     snowdin: () => {
         const map = addLevel([
@@ -754,4 +795,4 @@ for (const key in scenes) {
     scene(key, scenes[key])
 }
 
-go("flowey_tuto")
+go("ruins_1")
