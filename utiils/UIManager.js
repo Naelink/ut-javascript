@@ -474,9 +474,8 @@ class UI {
             console.log("A dialogue is already in progress.");
             return;
         }
-    
         window.isInDialog = true;
-        const box = add([sprite("textbubble"), fixed(), pos(position), scale(1)]);
+        window.fightdialogbox = add([sprite("textbubble"), fixed(), pos(position), scale(1)]);
         const segments = dialogText.split("|");
         let currentSegmentIndex = 0;
     
@@ -495,14 +494,16 @@ class UI {
             } else {
                 cleanup();
             }
+            if(window.endFloweyDialogue){
+                return
+            }
         };
     
         const cleanup = () => {
             if (window.currentTextDisplay) {
                 destroy(window.currentTextDisplay);
-                window.currentTextDisplay = null;
             }
-            destroy(box);
+            destroy(fightdialogbox);
             window.nextEvent = window.nextEvent + 1;
             console.log("Dialogue finished.");
             window.isInDialog = false;
@@ -575,7 +576,64 @@ class UI {
         processNext(); // Start processing
         return objetTexte;
     }
+    annoyingfloweydialog(dialogText, position, onComplete) {
+        if (window.isInDialog) {
+            console.log("A dialogue is already in progress.");
+            return;
+        }
+        wait(3.5, () => {cleanup()})
+        window.isInDialog = true;
+        window.fightdialogbox = add([sprite("textbubble"), fixed(), pos(position), scale(1)]);
+        const segments = dialogText.split("|");
+        let currentSegmentIndex = 0;
     
+        // Ensure any existing key press handler is canceled before setting up a new one
+        if (currentKeyPressHandler) {
+            currentKeyPressHandler.cancel();
+        }
+    
+        const afficherSegment = () => {
+            if (window.currentTextDisplay) {
+                destroy(window.currentTextDisplay);
+            }
+            if (currentSegmentIndex < segments.length) {
+                window.currentTextDisplay = this.animerTexteFight(segments[currentSegmentIndex], position);
+                currentSegmentIndex++;
+            } else {
+                cleanup();
+            }
+            if(window.endFloweyDialogue){
+                return
+            }
+        };
+    
+        const cleanup = () => {
+            if (window.currentTextDisplay) {
+                destroy(window.currentTextDisplay);
+            }
+            destroy(fightdialogbox);
+            window.nextEvent = window.nextEvent + 1;
+            console.log("Dialogue finished.");
+            window.isInDialog = false;
+            if (typeof onComplete === 'function') {
+                onComplete();
+            }
+            // Cancel the key press handler as part of cleanup
+            if (currentKeyPressHandler) {
+                currentKeyPressHandler.cancel();
+                currentKeyPressHandler = null;
+            }
+        };
+    
+        // Setup the key press handler and keep a reference to it
+        currentKeyPressHandler = onKeyPress("z", () => {
+            if (!window.textIsWriting && window.isInDialog) {
+                afficherSegment();
+            }
+        });
+    
+        afficherSegment();
+    }
     
     
     actMenu(enemyName) {
@@ -608,20 +666,24 @@ class UI {
     
     
     displayplayerHP(nombre, positionInitiale) {
+        destroyAll("HPdisplay")
         for (let i = 0; i < nombre; i++) {
             add([
                 rect(1.2, 20), // Crée une barre de largeur 1 et hauteur 20
                 pos(positionInitiale.x + i * 1.2, positionInitiale.y), // Positionne chaque barre à la suite de l'autre
                 color(255, 255, 0), // Définit la couleur de la barre en jaune (RGB)
+                "HPdisplay"
             ]);
         }
     }
     displayplayermaxHP(nombre, positionInitiale) {
+        destroyAll("HPMaxdisplay")
         for (let i = 0; i < nombre; i++) {
             add([
                 rect(1.2, 20), // Crée une barre de largeur 1 et hauteur 20
                 pos(positionInitiale.x + i * 1.2, positionInitiale.y), // Positionne chaque barre à la suite de l'autre
                 color(255, 0, 0), // Définit la couleur de la barre en jaune (RGB)
+                "HPMaxdisplay"
             ]);
         }
     }
@@ -676,13 +738,14 @@ class UI {
         }
         })
     }
-    heartManager(){
+    heartManager(position){
         const SPEED = 150
         window.heart = add ([
             sprite("heart"),
-            pos(302, 310),
+            pos(position),
             area(),
             body(),
+            "heart",
             {position:"fight"}
         ])
         onKeyDown("left", () => {

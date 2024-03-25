@@ -14,8 +14,8 @@ import { UIManager } from "./utiils/UIManager.js"
 
 let playerName="Nael"
 let playerLV = 1
-let playermaxHP = 20
-let playerHP = 20
+window.playermaxHP = 20
+window.playerHP = 20
 window.BossHP = 680
 window.BossMaxHP = 680
 
@@ -462,7 +462,7 @@ const scenes = {
 
     },
     flowey_tuto: () => {
-        add([sprite("blackbg")])
+        add([sprite("blackbg"), scale(2), pos(-80,-50)])
         const floweyspritetuto = add([sprite("flowey"), scale(2),pos(280,140)])
         floweyspritetuto.play("idle")
         add([text("lv " + playerLV ,{
@@ -473,10 +473,17 @@ const scenes = {
             size:10,
             font:"HP",
         } ),pos(270,404)])
-        add([text(playerHP + " / " + playermaxHP,{
+        const hp = add([text(playerHP + " / " + playermaxHP,{
             size:20,
             font:"trouble",
         } ),pos((340+((playermaxHP-20)*1.2)),400)])
+        
+        onUpdate(() => {
+            hp.use(text(playerHP + " / " + playermaxHP,{
+                size:20,
+                font:"trouble",
+            } ))
+        });
         const contour = add([
             rect(150 + 5*2, 125 + 5*2),
             pos(242 - 5, 257 - 5),
@@ -533,26 +540,13 @@ const scenes = {
             ]);
         }
         updateWalls()
-        UIManager.heartManager()
-        UIManager.displayplayermaxHP(playermaxHP, vec2(303, 398))
-        UIManager.displayplayerHP(playerHP, vec2(303, 398))
-        window.nextEvent = 0
-        const eventdis = add([
-            text(window.nextEvent.toString(), {
-                size: 34,
-                font: "deter",
-                width: 510,
-                lineSpacing: 8
-            }),
-            pos(50, 180),
-            color(255, 255, 255)
-        ]);
-        const updateScore = () => {
-            eventdis.text = window.nextEvent.toFixed(2);
-        };
+        UIManager.heartManager(310, 310)
         onUpdate(() => {
-            eventdis.use(text(window.nextEvent.toString()))
+            UIManager.displayplayermaxHP(playermaxHP, vec2(303, 398))
+            UIManager.displayplayerHP(playerHP, vec2(303, 398))
         });
+
+        window.nextEvent = 0
         window.currentKeyPressHandler = null
         function dialog1(onComplete) {
             UIManager.displayDialogFight("See that heart ?/bThat is your SOUL,|Your SOUL starts off weak.", vec2(370,135), onComplete)
@@ -593,8 +587,6 @@ const scenes = {
         })
         }
         function dialog2(onComplete) {
-            window.textIsWriting = false
-            window.isInDialog = false
             floweyspritetuto.play("idleside");
             const talk2 = onUpdate(() => {
                 if (window.textIsWriting == true && floweyspritetuto.curAnim() == "idleside") {
@@ -604,6 +596,7 @@ const scenes = {
                     floweyspritetuto.play("idleside")
                 }
                 if(window.nextEvent > 1){
+                    floweyspritetuto.play("idle")
                     talk2.cancel()
                 };
             })
@@ -628,26 +621,627 @@ const scenes = {
             pellet5.play("spin")
             tween(pellet5.pos, vec2(420, 110), 1, (p) => pellet5.pos = p, easings.linear)
         }
-        function sendPellets(){
-            UIManager.displayDialogFight("Move around! /p/bGet as many as you can!", vec2(370,135))
+        function sendPellets(onComplete){
+            UIManager.annoyingfloweydialog("Move around! /p/bGet as many as you can!", vec2(370,135), onComplete)
+            const talk3 = onUpdate(() => {
+                if (window.textIsWriting == true && floweyspritetuto.curAnim() == "idle") {
+                    floweyspritetuto.play("talk")
+                }
+                else if (window.textIsWriting == false && floweyspritetuto.curAnim() !== "idle"){
+                    floweyspritetuto.play("idle")
+                }
+                wait(1, () => {
+                    floweyspritetuto.play("idle")
+                    talk3.cancel()
+                })
+                
+            })
             pellet1.use(move(heart.pos.angle(pellet1.pos), 100))
             pellet2.use(move(heart.pos.angle(pellet2.pos), 100))
             pellet3.use(move(heart.pos.angle(pellet3.pos), 100))
             pellet4.use(move(heart.pos.angle(pellet4.pos), 100))
             pellet5.use(move(heart.pos.angle(pellet5.pos), 100))
+            window.gotHitByFlowey = false
+            onCollide("heart", "pellet", () => {
+                window.gotHitByFlowey = true
+                shake(20)
+            })
+            wait(3.5, () => {
+                if (window.gotHitByFlowey == false) {
+                    floweyspritetuto.play("sassy")
+                    wait(1.5, () => {
+                        window.heartpreviouspos = vec2(window.heart.pos.x , window.heart.pos.y)
+                        go("flowey_tuto_1")
+                    })
+                }
+            })
+            const floweyDie = onUpdate(() => {
+                if (window.gotHitByFlowey == true) {
+                    destroy(window.fightdialogbox)
+                    destroy(window.currentTextDisplay)
+                    destroyAll("pellet")
+                    playerHP = 1
+                    floweyspritetuto.play("grin")
+                    wait(2, () => {
+                        window.heartpreviouspos = vec2(window.heart.pos.x , window.heart.pos.y)
+                        go("flowey_tuto_die")
+                        })
+                    
+                }
+            })
         }
-        function startSequence() {
+        function checkCollision(){
+        }
+        function startSequence1() {
             dialog1(() => {
                 animateWink(() => {
                     dialog2(() => {
                         sendPellets(() => {
+                            checkCollision(() => {
 
+                            })
                         })
                     });
                 });
             });
         }
-        startSequence()
+        startSequence1()
+
+
+    },
+    flowey_tuto_1: () => {
+        add([sprite("blackbg"), scale(2), pos(-80,-50)])
+        const floweyspritetuto = add([sprite("flowey"), scale(2),pos(280,140)])
+        floweyspritetuto.play("sassy")
+        add([text("lv " + playerLV ,{
+            size:22,
+            font:"trouble",
+        } ),pos(198,398)])
+        add([text("HP" ,{
+            size:10,
+            font:"HP",
+        } ),pos(270,404)])
+        const hp = add([text(playerHP + " / " + playermaxHP,{
+            size:20,
+            font:"trouble",
+        } ),pos((340+((playermaxHP-20)*1.2)),400)])
+        
+        onUpdate(() => {
+            hp.use(text(playerHP + " / " + playermaxHP,{
+                size:20,
+                font:"trouble",
+            } ))
+        });
+        const contour = add([
+            rect(150 + 5*2, 125 + 5*2),
+            pos(242 - 5, 257 - 5),
+            color(255, 255, 255),
+            area(),
+            "border"
+        ]);
+        
+        // Intérieur de la boîte (initial)
+        const interieur = add([
+            rect(150, 125),
+            pos(242, 257),
+            color(0, 0, 0),
+        ]);
+        function updateWalls() {
+            // Supprimer les murs existants pour les recréer
+            destroyAll("wall");
+    
+            // Épaisseur des murs
+            const epaisseurMur = 5;
+    
+            // Création des murs en fonction des dimensions de 'interieur'
+            add([
+                rect(interieur.width, epaisseurMur), // Mur du haut
+                pos(interieur.pos.x, interieur.pos.y - epaisseurMur),
+                color(255, 255, 255, 0),
+                body({isStatic: true}),
+                area(),
+                "wall",
+            ]);
+            add([
+                rect(interieur.width, epaisseurMur), // Mur du bas
+                pos(interieur.pos.x, interieur.pos.y + interieur.height),
+                color(255, 255, 255, 0),
+                body({isStatic: true}),
+                area(),
+                "wall",
+            ]);
+            add([
+                rect(epaisseurMur, interieur.height + 2 * epaisseurMur), // Mur de gauche
+                pos(interieur.pos.x - epaisseurMur, interieur.pos.y - epaisseurMur),
+                color(255, 255, 255, 0),
+                body({isStatic: true}),
+                area(),
+                "wall",
+            ]);
+            add([
+                rect(epaisseurMur, interieur.height + 2 * epaisseurMur), // Mur de droite
+                pos(interieur.pos.x + interieur.width, interieur.pos.y - epaisseurMur),
+                color(255, 255, 255, 0),
+                body({isStatic: true}),
+                area(),
+                "wall",
+            ]);
+        }
+        updateWalls()
+        UIManager.heartManager(window.heartpreviouspos)
+        onUpdate(() => {
+            UIManager.displayplayermaxHP(playermaxHP, vec2(303, 398))
+            UIManager.displayplayerHP(playerHP, vec2(303, 398))
+        });
+
+        window.nextEvent = 0
+        window.currentKeyPressHandler = null
+        function dialog1(onComplete) {
+            UIManager.displayDialogFight("Hey buddy,/p/byou missed them.|Let's try again,/p/bokay?", vec2(370,135), onComplete)
+            const talk1 = onUpdate(() => {
+                if (window.textIsWriting == true && floweyspritetuto.curAnim() == "sassy") {
+                    floweyspritetuto.play("sassytalk")
+                }
+                else if (window.textIsWriting == false && floweyspritetuto.curAnim() !== "sassy"){
+                    floweyspritetuto.play("sassytalk")
+                }
+                if(window.nextEvent > 0){
+                    floweyspritetuto.play("idle");
+                    talk1.cancel()
+                };
+            })
+
+        }
+        function dialog2(onComplete) {
+            floweyspritetuto.play("idle");
+            const talk2 = onUpdate(() => {
+                if (floweyspritetuto.curAnim() == "idle") {
+                    floweyspritetuto.play("idle")
+                }
+            })
+            spawnPellets()
+            sendPellets()
+            
+        }
+        function spawnPellets(){
+            window.pellet1 = add([sprite("pellets"), scale(1),pos(200,110), area(), "pellet"])
+            pellet1.play("spin")
+            window.pellet2 = add([sprite("pellets"), scale(1),pos(245,65), area(), "pellet"])
+            pellet2.play("spin")
+            window.pellet3 = add([sprite("pellets"), scale(1),pos(310,45), area(), "pellet"])
+            pellet3.play("spin")
+            window.pellet4 = add([sprite("pellets"), scale(1),pos(380,65), area(), "pellet"])
+            pellet4.play("spin")
+            window.pellet5 = add([sprite("pellets"), scale(1),pos(420,110), area(), "pellet"])
+            pellet5.play("spin")
+        }
+        function sendPellets(onComplete){
+            window.nextEvent = 1
+            floweyspritetuto.play("idle");
+            const talk2 = onUpdate(() => {
+                if (floweyspritetuto.curAnim() == "idle") {
+                    floweyspritetuto.play("idle")
+                }
+            })
+            pellet1.use(move(heart.pos.angle(pellet1.pos), 100))
+            pellet2.use(move(heart.pos.angle(pellet2.pos), 100))
+            pellet3.use(move(heart.pos.angle(pellet3.pos), 100))
+            pellet4.use(move(heart.pos.angle(pellet4.pos), 100))
+            pellet5.use(move(heart.pos.angle(pellet5.pos), 100))
+            window.gotHitByFlowey = false
+            onCollide("heart", "pellet", () => {
+                window.gotHitByFlowey = true
+                shake(20)
+            })
+            wait(4, () => {
+                if (window.gotHitByFlowey == false) {
+                    destroy(window.fightdialogbox)
+                    destroy(window.currentTextDisplay)
+                    floweyspritetuto.play("pissed")
+                    wait(2, () => {
+                        window.heartpreviouspos = vec2(window.heart.pos.x , window.heart.pos.y)
+                        go("flowey_tuto_2")
+                    })
+                }
+            })
+            const floweyDie = onUpdate(() => {
+                if (window.gotHitByFlowey == true) {
+                    destroy(window.fightdialogbox)
+                    destroy(window.currentTextDisplay)
+                    destroyAll("pellet")
+                    playerHP = 1
+                    floweyspritetuto.play("grin")
+                    wait(2, () => {
+                        window.heartpreviouspos = vec2(window.heart.pos.x , window.heart.pos.y)
+                    go("flowey_tuto_die")
+                    })
+                }
+            })
+        }
+        function startSequence1() {
+            dialog1(() => {
+                    dialog2(() => {
+                        sendPellets(() => {
+                            checkCollision(() => {
+
+                            })
+                        })
+                    });
+            });
+        }
+        startSequence1()
+    },
+    flowey_tuto_2: () => {
+        window.isInDialog = false
+        add([sprite("blackbg"), scale(2), pos(-80,-50)])
+        const floweyspritetuto = add([sprite("flowey"), scale(2),pos(280,140)])
+        floweyspritetuto.play("pissed")
+        add([text("lv " + playerLV ,{
+            size:22,
+            font:"trouble",
+        } ),pos(198,398)])
+        add([text("HP" ,{
+            size:10,
+            font:"HP",
+        } ),pos(270,404)])
+        const hp = add([text(playerHP + " / " + playermaxHP,{
+            size:20,
+            font:"trouble",
+        } ),pos((340+((playermaxHP-20)*1.2)),400)])
+        
+        onUpdate(() => {
+            hp.use(text(playerHP + " / " + playermaxHP,{
+                size:20,
+                font:"trouble",
+            } ))
+        });
+        const contour = add([
+            rect(150 + 5*2, 125 + 5*2),
+            pos(242 - 5, 257 - 5),
+            color(255, 255, 255),
+            area(),
+            "border"
+        ]);
+        
+        // Intérieur de la boîte (initial)
+        const interieur = add([
+            rect(150, 125),
+            pos(242, 257),
+            color(0, 0, 0),
+        ]);
+        function updateWalls() {
+            // Supprimer les murs existants pour les recréer
+            destroyAll("wall");
+    
+            // Épaisseur des murs
+            const epaisseurMur = 5;
+    
+            // Création des murs en fonction des dimensions de 'interieur'
+            add([
+                rect(interieur.width, epaisseurMur), // Mur du haut
+                pos(interieur.pos.x, interieur.pos.y - epaisseurMur),
+                color(255, 255, 255, 0),
+                body({isStatic: true}),
+                area(),
+                "wall",
+            ]);
+            add([
+                rect(interieur.width, epaisseurMur), // Mur du bas
+                pos(interieur.pos.x, interieur.pos.y + interieur.height),
+                color(255, 255, 255, 0),
+                body({isStatic: true}),
+                area(),
+                "wall",
+            ]);
+            add([
+                rect(epaisseurMur, interieur.height + 2 * epaisseurMur), // Mur de gauche
+                pos(interieur.pos.x - epaisseurMur, interieur.pos.y - epaisseurMur),
+                color(255, 255, 255, 0),
+                body({isStatic: true}),
+                area(),
+                "wall",
+            ]);
+            add([
+                rect(epaisseurMur, interieur.height + 2 * epaisseurMur), // Mur de droite
+                pos(interieur.pos.x + interieur.width, interieur.pos.y - epaisseurMur),
+                color(255, 255, 255, 0),
+                body({isStatic: true}),
+                area(),
+                "wall",
+            ]);
+        }
+        updateWalls()
+        UIManager.heartManager(window.heartpreviouspos)
+        onUpdate(() => {
+            UIManager.displayplayermaxHP(playermaxHP, vec2(303, 398))
+            UIManager.displayplayerHP(playerHP, vec2(303, 398))
+        });
+
+        window.nextEvent = 0
+        window.currentKeyPressHandler = null
+        function dialog1(onComplete) {
+            UIManager.displayDialogFight("Is this a joke?/p/bAre you braindead?/p/bRUN./p INTO./p THE./p/bBULLETS!!!", vec2(370,135), onComplete)
+            const talk1 = onUpdate(() => {
+                if (window.textIsWriting == true && floweyspritetuto.curAnim() == "pissed") {
+                    floweyspritetuto.play("pissedtalk")
+                }
+                else if (window.textIsWriting == false && floweyspritetuto.curAnim() !== "pissedtalk"){
+                    floweyspritetuto.play("pissedtalk")
+                }
+                if(window.nextEvent > 0){
+                    floweyspritetuto.play("idle");
+                    talk1.cancel()
+                };
+            })
+
+        }
+        function dialog2(onComplete) {
+            floweyspritetuto.play("idle");
+            const talk2 = onUpdate(() => {
+                if (floweyspritetuto.curAnim() == "idle") {
+                    floweyspritetuto.play("idle")
+                }
+            })
+            spawnPellets()
+            sendPellets()
+            
+        }
+        function spawnPellets(){
+            window.pellet1 = add([sprite("pellets"), scale(1),pos(200,110), area(), "pellet"])
+            pellet1.play("spin")
+            window.pellet2 = add([sprite("pellets"), scale(1),pos(245,65), area(), "pellet"])
+            pellet2.play("spin")
+            window.pellet3 = add([sprite("pellets"), scale(1),pos(310,45), area(), "pellet"])
+            pellet3.play("spin")
+            window.pellet4 = add([sprite("pellets"), scale(1),pos(380,65), area(), "pellet"])
+            pellet4.play("spin")
+            window.pellet5 = add([sprite("pellets"), scale(1),pos(420,110), area(), "pellet"])
+            pellet5.play("spin")
+        }
+        function sendPellets(onComplete){
+            window.nextEvent = 1
+            floweyspritetuto.play("idle");
+            const talk2 = onUpdate(() => {
+                if (floweyspritetuto.curAnim() == "idle") {
+                    floweyspritetuto.play("idle")
+                }
+            })
+            pellet1.use(move(heart.pos.angle(pellet1.pos), 150))
+            pellet2.use(move(heart.pos.angle(pellet2.pos), 150))
+            pellet3.use(move(heart.pos.angle(pellet3.pos), 150))
+            pellet4.use(move(heart.pos.angle(pellet4.pos), 150))
+            pellet5.use(move(heart.pos.angle(pellet5.pos), 150))
+            window.gotHitByFlowey = false
+            onCollide("heart", "pellet", () => {
+                window.gotHitByFlowey = true
+                shake(20)
+            })
+            wait(6, () => {
+                if (window.gotHitByFlowey == false) {
+                    destroy(window.fightdialogbox)
+                    destroy(window.currentTextDisplay)
+                    floweyspritetuto.play("evil")
+                    wait(4, () => {
+                        window.heartpreviouspos = vec2(window.heart.pos.x , window.heart.pos.y)
+                        go("flowey_tuto_3")
+                    })
+                }
+            })
+            const floweyDie = onUpdate(() => {
+                if (window.gotHitByFlowey == true) {
+                    destroy(window.fightdialogbox)
+                    destroy(window.currentTextDisplay)
+                    destroyAll("pellet")
+                    playerHP = 1
+                    floweyspritetuto.play("grin")
+                    wait(2, () => {
+                        window.heartpreviouspos = vec2(window.heart.pos.x , window.heart.pos.y)
+                    go("flowey_tuto_die")
+                    })
+                }
+            })
+        }
+        function startSequence1() {
+            dialog1(() => {
+                    dialog2(() => {
+                        sendPellets(() => {
+                            checkCollision(() => {
+
+                            })
+                        })
+                    });
+            });
+        }
+        startSequence1()
+    },
+    flowey_tuto_3: () => {
+        add([sprite("blackbg"), scale(2), pos(-80,-50)])
+        const floweyspritetuto = add([sprite("flowey"), scale(2),pos(280,140)])
+        floweyspritetuto.play("evil")
+        add([text("lv " + playerLV ,{
+            size:22,
+            font:"trouble",
+        } ),pos(198,398)])
+        add([text("HP" ,{
+            size:10,
+            font:"HP",
+        } ),pos(270,404)])
+        const hp = add([text(playerHP + " / " + playermaxHP,{
+            size:20,
+            font:"trouble",
+        } ),pos((340+((playermaxHP-20)*1.2)),400)])
+        
+        onUpdate(() => {
+            hp.use(text(playerHP + " / " + playermaxHP,{
+                size:20,
+                font:"trouble",
+            } ))
+        });
+        const contour = add([
+            rect(150 + 5*2, 125 + 5*2),
+            pos(242 - 5, 257 - 5),
+            color(255, 255, 255),
+            area(),
+            "border"
+        ]);
+        
+        // Intérieur de la boîte (initial)
+        const interieur = add([
+            rect(150, 125),
+            pos(242, 257),
+            color(0, 0, 0),
+        ]);
+        function updateWalls() {
+            // Supprimer les murs existants pour les recréer
+            destroyAll("wall");
+    
+            // Épaisseur des murs
+            const epaisseurMur = 5;
+    
+            // Création des murs en fonction des dimensions de 'interieur'
+            add([
+                rect(interieur.width, epaisseurMur), // Mur du haut
+                pos(interieur.pos.x, interieur.pos.y - epaisseurMur),
+                color(255, 255, 255, 0),
+                body({isStatic: true}),
+                area(),
+                "wall",
+            ]);
+            add([
+                rect(interieur.width, epaisseurMur), // Mur du bas
+                pos(interieur.pos.x, interieur.pos.y + interieur.height),
+                color(255, 255, 255, 0),
+                body({isStatic: true}),
+                area(),
+                "wall",
+            ]);
+            add([
+                rect(epaisseurMur, interieur.height + 2 * epaisseurMur), // Mur de gauche
+                pos(interieur.pos.x - epaisseurMur, interieur.pos.y - epaisseurMur),
+                color(255, 255, 255, 0),
+                body({isStatic: true}),
+                area(),
+                "wall",
+            ]);
+            add([
+                rect(epaisseurMur, interieur.height + 2 * epaisseurMur), // Mur de droite
+                pos(interieur.pos.x + interieur.width, interieur.pos.y - epaisseurMur),
+                color(255, 255, 255, 0),
+                body({isStatic: true}),
+                area(),
+                "wall",
+            ]);
+        }
+        updateWalls()
+        UIManager.heartManager(window.heartpreviouspos)
+        onUpdate(() => {
+            UIManager.displayplayermaxHP(playermaxHP, vec2(303, 398))
+            UIManager.displayplayerHP(playerHP, vec2(303, 398))
+        });
+
+        window.nextEvent = 0
+        window.currentKeyPressHandler = null
+        function dialog1(onComplete) {
+            UIManager.displayDialogFight("You know what's going on here,/p/bdon't you ?|You just wanted to see me suffer.", vec2(370,135), onComplete)
+            const talk1 = onUpdate(() => {
+                if (window.textIsWriting == true && floweyspritetuto.curAnim() == "evil") {
+                    floweyspritetuto.play("eviltalk")
+                }
+                else if (window.textIsWriting == false && floweyspritetuto.curAnim() !== "eviltalk"){
+                    floweyspritetuto.play("eviltalk")
+                }
+                if(window.nextEvent > 0){
+                    floweyspritetuto.play("evil");
+                    talk1.cancel()
+                };
+            })
+
+        }
+        function dialog2(onComplete) {
+            floweyspritetuto.play("evil");
+            const talk2 = onUpdate(() => {
+                if (floweyspritetuto.curAnim() == "evil") {
+                    floweyspritetuto.play("evil")
+                }
+            })
+            spawnPellets()
+            
+        }
+        function spawnPellets() {
+            const circleCenter = vec2(310, 310); // Centre du cercle
+            const radius = 100; // Rayon du cercle
+            const pelletsCount = 50; // Nombre de pellets à générer
+            const angleStep = 360 / pelletsCount; // Étape d'angle entre chaque pellet
+            const delayPerPellet = 0.03; // Délai en secondes entre l'apparition de chaque pellet
+        
+            for (let i = 0; i < pelletsCount; i++) {
+                // Calcul de l'angle pour un placement en contre-sens horaire, en commençant par le bas
+                const angleInDegrees = (360 - (angleStep * i)) % 360;
+                const angleInRadians = angleInDegrees * (Math.PI / 180); // Conversion en radians
+                const pelletPos = vec2(
+                    circleCenter.x + radius * Math.cos(angleInRadians), // Calcul de la position x
+                    circleCenter.y + radius * Math.sin(angleInRadians) // Calcul de la position y
+                );
+        
+                // Fonction pour ajouter un pellet après un délai
+                wait(i * delayPerPellet, () => {
+                    const pellet = add([
+                        sprite("pellets"), 
+                        scale(1),
+                        pos(pelletPos.x, pelletPos.y), 
+                        area(),
+                        "pellet"
+                    ]);
+        
+                    // Alternate between "spin" and "spin2" animations
+                    if (i % 2 === 0) {
+                        pellet.play("spin");
+                    } else {
+                        pellet.play("spin2");
+                    }
+                });
+            }
+        }
+        
+        function sendPellets(onComplete){
+            wait(6, () => {
+                if (window.gotHitByFlowey == false) {
+                    destroy(window.fightdialogbox)
+                    destroy(window.currentTextDisplay)
+                    floweyspritetuto.play("evil")
+                    wait(4, () => {
+                        go("flowey_tuto_3")
+                    })
+                }
+            })
+            const floweyDie = onUpdate(() => {
+                if (window.gotHitByFlowey == true) {
+                    destroy(window.fightdialogbox)
+                    destroy(window.currentTextDisplay)
+                    destroyAll("pellet")
+                    playerHP = 1
+                    floweyspritetuto.play("grin")
+                    wait(2, () => {
+                    go("flowey_tuto_die")
+                    })
+                }
+            })
+        }
+        function startSequence1() {
+            dialog1(() => {
+                    dialog2(() => {
+                        sendPellets(() => {
+                            checkCollision(() => {
+
+                            })
+                        })
+                    });
+            });
+        }
+        startSequence1()
+    },
+    flowey_tuto_die: () => {
+
     },
     snowdin: () => {
         const map = addLevel([
@@ -795,4 +1389,4 @@ for (const key in scenes) {
     scene(key, scenes[key])
 }
 
-go("ruins_1")
+go("flowey_tuto")

@@ -89,7 +89,7 @@ export const load = {
             }
         })
         loadSprite("flowey", "./assets/flowey.png", {
-            sliceX: 8,
+            sliceX: 13,
             anims: {
                 "idle": {
                     from: 0,
@@ -116,6 +116,46 @@ export const load = {
                 "idleside":{
                     from: 3,
                     to: 3,
+                },
+                "grin":{
+                    from: 5,
+                    to: 5,
+                },
+                "grintalk":{
+                    from: 5,
+                    to: 6,
+                    speed: 6,
+                    loop : true
+                },
+                "sassy":{
+                    from: 7,
+                    to: 7,
+                },
+                "sassytalk":{
+                    from: 7,
+                    to: 8,
+                    speed: 6,
+                    loop : true
+                },
+                "pissed":{
+                    from: 9,
+                    to: 9,
+                },
+                "pissedtalk":{
+                    from: 9,
+                    to: 10,
+                    speed: 6,
+                    loop : true
+                },
+                "evil":{
+                    from: 11,
+                    to: 11,
+                },
+                "eviltalk":{
+                    from: 11,
+                    to: 12,
+                    speed: 6,
+                    loop : true
                 }
             }
         })
@@ -134,6 +174,12 @@ export const load = {
                 "spin": {
                     from: 0,
                     to: 1,
+                    speed: 14,
+                    loop : true
+                },
+                "spin2": {
+                    from: 1,
+                    to: 0,
                     speed: 14,
                     loop : true
                 }
