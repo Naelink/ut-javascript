@@ -26,6 +26,7 @@ export const load = {
         loadSprite("attackcursor1", "./assets/attack_cursor1.png")
         loadSprite("ruins_1", "./assets/ruins_1.png")
         loadSprite("ruins_2", "./assets/ruins_2.png")
+        loadSprite("ruins_3", "./assets/ruins_3.png")
         loadSprite("snowdin", "./assets/snowdin1.png")
         loadSprite("snowdin2", "./assets/snowdin2.png")
         loadSprite("bottomtrees1", "./assets/bottomtrees1.png")
@@ -127,6 +128,16 @@ export const load = {
                     speed: 6,
                     loop : true
                 },
+                "grintalkidle":{
+                    from: 6,
+                    to: 6
+                },
+                "grinlaugh":{
+                    from: 5,
+                    to: 6,
+                    speed: 18,
+                    loop : true
+                },
                 "sassy":{
                     from: 7,
                     to: 7,
@@ -185,10 +196,120 @@ export const load = {
                 }
             }
         })
+        loadSprite("fireballcutscene", "./assets/fireball_cutscene.png", {
+            sliceX: 3,
+            anims: {
+                "idle": {
+                    from: 1,
+                    to: 1
+                },
+                "burn": {
+                    from: 1,
+                    to: 2,
+                    speed: 8,
+                    loop : true
+                }
+                ,
+                "blink": {
+                    from: 0,
+                    to: 1,
+                    speed: 16,
+                    loop : true
+                }
+            }
+        })
+        loadSprite("torieltuto", "./assets/toriel_tuto.png", {
+            sliceX: 2,
+            anims: {
+                "idle": {
+                    from: 0,
+                    to: 1
+                },
+                "talk": {
+                    from: 0,
+                    to: 1,
+                    speed: 8,
+                    loop : true
+                }
+            }
+        })
+        loadSprite("torieldialog", "./assets/torieldialog.png", {
+            sliceX: 8,
+            anims: {
+                "idle": {
+                    from: 0,
+                    to: 0
+                },
+                "talk": {
+                    from: 0,
+                    to: 1,
+                    speed: 8,
+                    loop : true
+                }
+            }
+        })
+        loadSprite("torielwalk", "./assets/torielow.png", {
+            sliceX: 16,
+            anims: {
+                "down": {
+                    from: 0,
+                    to: 3,
+                    speed: 6,
+                    loop : true
+                },
+                "left": {
+                    from: 4,
+                    to: 7,
+                    speed: 6,
+                    loop : true
+                },
+                "right": {
+                    from: 8,
+                    to: 11,
+                    speed: 6,
+                    loop : true
+                },
+                "up": {
+                    from: 12,
+                    to: 15,
+                    speed: 6,
+                    loop : true
+                },
+                "idled": {
+                    from: 0,
+                    to: 0
+                },
+                "idlel": {
+                    from: 4,
+                    to: 4,
+                },
+                "idler": {
+                    from: 8,
+                    to: 8,
+                },
+                "idleu": {
+                    from: 12,
+                    to: 12,
+                },
+            }
+        })
         loadSprite("wink", "./assets/winkstar.png")
+        loadSprite("floweyhurt", "./assets/floweyhurt.png")
         loadSprite("miss", "./assets/miss.png")
         loadSprite("textbubble", "./assets/textbubble.png")
         loadSound("uimove", "./assets/ui bip.mp3")
+        loadSound("bestfriend", "/assets/bestfriend.mp3")
+        loadSound("floweyspeak", "/assets/floweyspeak.mp3")
+        loadSound("evilfloweyspeak", "/assets/evilfloweyspeak.mp3")
+        loadSound("floweyscream", "/assets/floweyscream.mp3")
+        loadSound("floweyoutro", "/assets/floweyoutro.mp3")
+        loadSound("heal", "/assets/heal.mp3")
+        loadSound("pelletcircle", "/assets/pelletcircle.mp3")
+        loadSound("floweylaugh", "/assets/floweylaugh.mp3")
+        loadSound("encounter", "/assets/encounter.mp3")
+        loadSound("torielspeak", "/assets/torielspeak.mp3")
+        loadSound("fallendown", "/assets/fallendown.mp3")
+        loadSound("damagetaken", "/assets/damagetaken.mp3")
         
     
 

@@ -8,9 +8,13 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
   "devDependencies": {
     "electron": "^29.1.1",
     "electron-packager": "^17.1.2"
+  },
+  "description": "",
+  "dependencies": {
+    "express": "^4.19.2",
+    "mysql": "^2.18.1"
   }
 }

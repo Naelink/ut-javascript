@@ -308,7 +308,7 @@ class UI {
             destroyAll("dmgdis");
         });
     }
-    displayDialogOW(dialogText, upOrDown, hasSprite, Sprite) {
+    displayDialogOW(dialogText, upOrDown, hasSprite, Sprite, animidle, anim2, onComplete) {
         window.isInDialog = true
         let positionTexte = upOrDown === "up" ? vec2(60, 50) : vec2(60, 350);
         const box = add([sprite("box2"), fixed(), pos(upOrDown === "up" ? vec2(30, 15) : vec2(30, 315),), scale(0.559)]);
@@ -320,9 +320,11 @@ class UI {
             destroy(window.dialSprite);
             destroy(window.currentTextDisplay);
             destroy(box);
-            debug.log("Dialogue finished.");
             window.isInDialog = false;
             window.nextEvent =+ 1
+            if(typeof onComplete === 'function'){
+                onComplete()
+            }
         };
     
         const afficherSegment = () => {
@@ -332,7 +334,7 @@ class UI {
     
             if (currentSegmentIndex < segments.length) {
                 if(hasSprite){
-                    window.currentTextDisplay = this.animerTexteSprite(segments[currentSegmentIndex], positionTexte, Sprite);
+                    window.currentTextDisplay = this.animerTexteSprite(segments[currentSegmentIndex], positionTexte, Sprite, animidle, anim2);
                 }
                 else{
                     window.currentTextDisplay = this.animerTexte(segments[currentSegmentIndex], positionTexte);
@@ -404,7 +406,7 @@ class UI {
         processNext(); // Start processing
         return objetTexte;
     }
-    animerTexteSprite(texteComplet, positionTexte, Sprite) {
+    animerTexteSprite(texteComplet, positionTexte, Sprite, animidle, anim2) {
         let texteActuel = ""; // Texte actuellement affiché
         window.textIsWriting = true; // Indique que le texte commence à s'afficher
     
@@ -458,11 +460,11 @@ class UI {
         ])
         dialSprite.play("idle")
         onUpdate(() => {
-            if (window.textIsWriting == true && dialSprite.curAnim() == "idle") {
-                dialSprite.play("talk")
+            if (window.textIsWriting == true && dialSprite.curAnim() == animidle) {
+                dialSprite.play(anim2)
             }
-            else if (window.textIsWriting == false && dialSprite !== "idle"){
-                dialSprite.play("idle")
+            else if (window.textIsWriting == false && dialSprite !== animidle){
+                dialSprite.play(animidle)
             }
         });
     
@@ -505,7 +507,6 @@ class UI {
             }
             destroy(fightdialogbox);
             window.nextEvent = window.nextEvent + 1;
-            console.log("Dialogue finished.");
             window.isInDialog = false;
             if (typeof onComplete === 'function') {
                 onComplete();
@@ -560,7 +561,7 @@ class UI {
                         if (index < text.length) {
                             texteActuel += text[index];
                             objetTexte.text = texteActuel;
-                            wait(0.03, () => processText(text, index + 1));
+                            wait(0.04, () => processText(text, index + 1));
                         } else {
                             commandIndex++;
                             processNext();
@@ -613,7 +614,6 @@ class UI {
             }
             destroy(fightdialogbox);
             window.nextEvent = window.nextEvent + 1;
-            console.log("Dialogue finished.");
             window.isInDialog = false;
             if (typeof onComplete === 'function') {
                 onComplete();
@@ -763,6 +763,51 @@ class UI {
         onKeyDown("down", () => {
             heart.move(0, SPEED)
         })
+    }
+    startFightAnimationFlowey(){
+        play("encounter")
+        window.transitionfight = add([
+            rect(width(), height()),
+            color(0,0,0),
+            opacity(1),
+            stay(),
+            fixed(),
+            z(100)])
+        player.use(z(95))
+        const tempheart = add([
+                sprite("heart"),
+                pos(vec2(window.player.pos.x+10, window.player.pos.y-20)),
+                scale(1),
+                area(),
+                fixed(),
+                z(99)
+            ])
+        wait(0.1, () => {
+            transitionfight.use(z(90))
+            wait(0.1, () => {
+                tempheart.use(opacity(0))
+                wait(0.1, () => {
+                    tempheart.use(opacity(1))
+                            wait(0.1, () => {
+                                tempheart.use(opacity(0))
+                                wait(0.1, () => {
+                                    window.player.use(opacity(0))
+                                    tempheart.use(opacity(1))
+                                    wait(0.1, () => {
+                                        tween(tempheart.pos, vec2(310,310),0.5, (p) => tempheart.pos = p, easings.linear)
+                                        wait(0.51, () => {
+                                            go("flowey_tuto")
+                                            wait(0.51, () => {
+                                                window.player.use(opacity(1))})
+                                        })
+                                    })
+                                })
+                            })
+                        
+                })
+            })
+        })
+        
     }
     
 }

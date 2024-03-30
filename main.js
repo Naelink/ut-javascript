@@ -256,7 +256,26 @@ const scenes = {
         });
     
     },
-    ruins_1: () => {
+    ruins_1: (transition) => {
+        if(transition){
+            tween(1, 0, 0.5, (t) => transition.opacity = t, easings.easeOutQuad)
+        wait(1, () => {
+            destroy(transition)
+        })
+        }
+        const newData = { newValue: "0" };
+                            fetch('/api/updateTempPlotValue', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify(newData),
+                            })
+                            .then(response => response.text())
+                            .then(result => {
+                            console.log(result);
+                            });
+        
         add([
             rect(300, 20), // Mur du haut
             pos(150,60),
@@ -359,7 +378,7 @@ const scenes = {
         ]);
         add([
             rect(100, 20), // htbox porte
-            pos(1200,240),
+            pos(1200,250),
             color(255, 0, 255, 0),
             body({isStatic: true}),
             area(),
@@ -407,61 +426,522 @@ const scenes = {
         }
         
         player.onCollide('hitboxporte', () => {
-            go("ruins_2")
-        })
+            const transition = add([
+                rect(width(), height()),
+                color(0,0,0),
+                opacity(1),
+                stay(),
+                fixed(),
+                z(100),
+                {
+                    add() {
+                        tween(0, 1, 0.5, (t) => transition.opacity = t, easings.easeOutQuad)
+                        wait(0.5, () => {
+                            go("ruins_2", transition)
+                        })
+                    }
+                }
+            ])
+        });
     },
-    ruins_2: () => {
-        window.nextEvent = 0
-        const hitboxdialog = add([
-            rect(300, 20), // htbox porte
-            pos(175,300),
-            color(255, 0, 255, 0),
-            body({isStatic: true}),
-            area(),
-            "hitboxdialog",
-        ]);
-        add([sprite("ruins_2"), pos(0, -350), scale(2.01)])
-        const floweyow = add([sprite("floweyow"), pos(295, 215), scale(2)])
-        UIManager.playerManager(vec2(305,455))
-        player.play("idleu")
-        const limitUp = 0
-        const limitDown = 295
-        const limitLeft = 280
-        const limitRight = 995
-        const playerX = player.pos.x
-        let playerY = player.pos.y
-        const hitboxback = add([
-            rect(300, 20), // htbox porte
-            pos(175,520),
-            color(255, 0, 255, 0),
-            body({isStatic: true}),
-            area(),
-            "hitboxback",
-        ]);
-        window.player.onUpdate(() => {
-            camPos(playerX+16, playerY-162)
+    ruins_2: ( transition ) => {
+        if(transition){
+            tween(1, 0, 0.5, (t) => transition.opacity = t, easings.easeOutQuad)
+        wait(1, () => {
+            destroy(transition)
         })
-        window.player.onUpdate(() => {
-            if(player.pos.y > limitUp && player.pos.y < limitDown){
-            playerY = player.pos.y + 162
+        }
+        let tuto_over = false
+        let torielGone = false
+        fetch('/api/getTempPlotValue')
+        .then(response => response.json())
+        .then(data => {
+            const plotValue = parseInt(data.data, 10); // Convertit la chaîne en entier
+            if (!isNaN(plotValue) && plotValue == 1) { 
+                tuto_over = true;
+                torielGone = false;
+                console.log("Plotvalue = 1");
+            } else if(plotValue > 1) {
+                tuto_over = true
+                torielGone = true
+                console.log("Plotvalue supérieur à 1");
             }
-        })
-        player.onCollide('hitboxdialog', () => {
-            UIManager.displayDialogOW("* Howdy ! /b/p* I'm FLOWEY./b/p* FLOWEY the FLOWER!|* Hmmm...|* You're new to the /b UNDERGROUD,/p aren'tcha ?|* Golly,/p you must be so confused.|* Someone ought to teach you how things work around here!|* I guess little old me will have to do.|* Ready ? /p /b* Here we go !"
-            , "up", true, "flowey")
-        })
-        onUpdate(() => {
-            if(window.nextEvent == 1){
-                wait(0.636, () => {go("flowey_tuto")})
-        }})
-        
-        player.onCollide('hitboxback', () => {
-            window.currentRoom = "ruins_2"
-            go("ruins_1")
-        })
+            else {
+                console.log("La valeur n'est pas un nombre valide.");
+            }
+            
+        if(tuto_over == false){
+            window.nextEvent = 0
+            
+            const hitboxdialog = add([
+                rect(500, 20), // htbox porte
+                pos(105,300),
+                color(255, 255, 0),
+                body({isStatic: true}),
+                area(),
+                "hitboxdialog",
+            ]);
+            add([
+                rect(150, 20),
+                pos(75,450),
+                color(255, 255, 255),
+                body({isStatic: true}),
+                area(),
+                rotate(30),
+                "murdiagonalbas"
+            ]);
+            add([
+                rect(150, 20),
+                pos(400,520),
+                color(255, 255, 255),
+                body({isStatic: true}),
+                area(),
+                rotate(-30),
+                "murdiagonalbas"
+            ]);
+            add([
+                rect(550, 20),
+                pos(520,-80),
+                color(255, 255, 255),
+                body({isStatic: true}),
+                area(),
+                rotate(90),
+                "murgauche"
+            ]);
+            add([
+                rect(550, 20),
+                pos(120,-80),
+                color(255, 255, 255),
+                body({isStatic: true}),
+                area(),
+                rotate(90),
+                "murdroite"
+            ]);
+            add([
+                rect(150, 20),
+                pos(130,-80),
+                color(255, 255, 255),
+                body({isStatic: true}),
+                area(),
+                rotate(0),
+                "murhaut"
+            ]);
+            add([
+                rect(150, 20),
+                pos(370,-80),
+                color(255, 255, 255),
+                body({isStatic: true}),
+                area(),
+                rotate(0),
+                "murhaut"
+            ]);
+            add([
+                rect(150, 20),
+                pos(240,-100),
+                color(0, 255, 255),
+                body({isStatic: true}),
+                area(),
+                rotate(0),
+                "hitboxhaut"
+            ]);
+            add([sprite("ruins_2"), pos(0, -350), scale(2.01)])
+            const floweyow = add([sprite("floweyow"), pos(295, 215), scale(2)])
+            UIManager.playerManager(vec2(305,455))
+            player.play("idleu")
+            const limitUp = 0
+            const limitDown = 295
+            const limitLeft = 280
+            const limitRight = 995
+            const playerX = player.pos.x
+            let playerY = player.pos.y
+            
+            const hitboxback = add([
+                rect(300, 20), // htbox porte
+                pos(175,530),
+                color(0, 0, 0, 0),
+                body({isStatic: true}),
+                area(),
+                "hitboxback",
+            ]);
+            window.player.onUpdate(() => {
+                camPos(playerX+16, playerY-162)
+            })
+            window.player.onUpdate(() => {
+                if(player.pos.y > limitUp && player.pos.y < limitDown){
+                playerY = player.pos.y + 162
+                }
+            })
+            player.onCollide('hitboxdialog', () => {
+                UIManager.displayDialogOW("* Howdy ! /b/p* I'm FLOWEY./b/p* FLOWEY the FLOWER!|* Hmmm...|* You're new to the /b UNDERGROUD,/p aren'tcha ?|* Golly,/p you must be so confused.|* Someone ought to teach you how things work around here!|* I guess little old me will have to do.|* Ready ? /p /b* Here we go !"
+                , "up", true, "flowey", "idle", "talk", )
+                window.bestfriendost = play("bestfriend", {
+                    volume: 1,
+                    loop: true
+                })
+            })
+            let speaking = play("floweyspeak", {
+                volume: 1,
+                paused: true,
+                loop:true
+            })
+            onUpdate(() => {
+                if (window.textIsWriting == true) {
+                    speaking.paused = false
+                }
+                else if(!window.textIsWriting){
+                    speaking.paused = true
+                }
+            })
+            let fightStarted = false
+            onUpdate(() => {
+                if(window.nextEvent == 1){
+                    if(!fightStarted){
+                    fightStarted = true
+                    UIManager.startFightAnimationFlowey()
+                    }
+            }})
+            
+            player.onCollide('hitboxback', () => {
+                window.currentRoom = "ruins_2"
+                const transition = add([
+                    rect(width(), height()),
+                    color(0,0,0),
+                    opacity(1),
+                    stay(),
+                    fixed(),
+                    z(100),
+                    {
+                        add() {
+                            tween(0, 1, 0.5, (t) => transition.opacity = t, easings.easeOutQuad)
+                            wait(0.5, () => {
+                                go("ruins_1", transition)
+                            })
+                        }
+                    }
+                ])
+            })
+            player.onCollide('hitboxhaut', () => {
+                window.currentRoom = "ruins_2"
+                const transition = add([
+                    rect(width(), height()),
+                    color(0,0,0),
+                    opacity(1),
+                    stay(),
+                    fixed(),
+                    z(100),
+                    {
+                        add() {
+                            tween(0, 1, 0.5, (t) => transition.opacity = t, easings.easeOutQuad)
+                            wait(0.5, () => {
+                                go("ruins_3", transition)
+                            })
+                        }
+                    }
+                ])
+            })
+        }
+        else if (tuto_over == true && torielGone == false){
+            
+            add([
+                rect(150, 20),
+                pos(75,450),
+                color(255, 255, 255),
+                body({isStatic: true}),
+                area(),
+                rotate(30),
+                "murdiagonalbas"
+            ]);
+            add([
+                rect(150, 20),
+                pos(400,520),
+                color(255, 255, 255),
+                body({isStatic: true}),
+                area(),
+                rotate(-30),
+                "murdiagonalbas"
+            ]);
+            add([
+                rect(550, 20),
+                pos(520,-80),
+                color(255, 255, 255),
+                body({isStatic: true}),
+                area(),
+                rotate(90),
+                "murgauche"
+            ]);
+            add([
+                rect(550, 20),
+                pos(120,-80),
+                color(255, 255, 255),
+                body({isStatic: true}),
+                area(),
+                rotate(90),
+                "murdroite"
+            ]);
+            add([
+                rect(150, 20),
+                pos(130,-80),
+                color(255, 255, 255),
+                body({isStatic: true}),
+                area(),
+                rotate(0),
+                "murhaut"
+            ]);
+            add([
+                rect(150, 20),
+                pos(370,-80),
+                color(255, 255, 255),
+                body({isStatic: true}),
+                area(),
+                rotate(0),
+                "murhaut"
+            ]);
+            const hitboxhaut = add([
+                rect(150, 20),
+                pos(240,-100),
+                color(0, 255, 255),
+                body({isStatic: true}),
+                area(),
+                rotate(0),
+                "hitboxhaut"
+            ]);
+            add([sprite("ruins_2"), pos(0, -350), scale(2.01)])
+            const floweyow = add([sprite("torielwalk"), pos(295, 215), scale(2), opacity(1),"torielOW", area()])
+            UIManager.playerManager(vec2(305,340))
+            player.play("idleu")
+            const limitUp = 0
+            const limitDown = 295
+            const limitLeft = 280
+            const limitRight = 995
+            const playerX = player.pos.x
+            let playerY = player.pos.y
+            const hitboxback = add([
+                rect(300, 20), // htbox porte
+                pos(175,520),
+                color(0, 0, 0, 0),
+                body({isStatic: true}),
+                area(),
+                "hitboxback",
+            ]);
+            window.player.onUpdate(() => {
+                camPos(playerX+16, playerY-50)
+            })
+            window.player.onUpdate(() => {
+                if(player.pos.y > limitUp && player.pos.y < limitDown){
+                playerY = player.pos.y +50
+                }
+            })
+            function torielLeave(){
+                tween(floweyow.pos, vec2(290, -100), 2, (p) => floweyow.pos = p, easings.linear)
+                floweyow.play("up")
+                floweyow.onCollide("hitboxhaut", () => {
+                    floweyow.play("idleu")
+                    tween(1, 0, 0.5, (t) => floweyow.opacity = t, easings.easeOutQuad)
+                })
+                const newData = { newValue: "2" };
+                            fetch('/api/updateTempPlotValue', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify(newData),
+                            })
+                            .then(response => response.text())
+                            .then(result => {
+                            console.log(result);
+                            });
+            }
+            UIManager.displayDialogOW("* This way."
+                , "up", true, "torieldialog", "idle", "talk", torielLeave)
+            let speaking = play("torielspeak", {
+                volume: 1,
+                paused: true,
+                loop:true
+            })
+            onUpdate(() => {
+                if (window.textIsWriting == true) {
+                    speaking.paused = false
+                }
+                else if(!window.textIsWriting){
+                    speaking.paused = true
+                }
+            })
+            let fightStarted = false
+            
+            player.onCollide('hitboxback', () => {
+                window.currentRoom = "ruins_2"
+                const transition = add([
+                    rect(width(), height()),
+                    color(0,0,0),
+                    opacity(1),
+                    stay(),
+                    fixed(),
+                    z(100),
+                    {
+                        add() {
+                            tween(0, 1, 0.5, (t) => transition.opacity = t, easings.easeOutQuad)
+                            wait(0.5, () => {
+                                go("ruins_1", transition)
+                            })
+                        }
+                    }
+                ])
+            })
+            player.onCollide('hitboxhaut', () => {
+                window.currentRoom = "ruins_2"
+                const transition = add([
+                    rect(width(), height()),
+                    color(0,0,0),
+                    opacity(1),
+                    stay(),
+                    fixed(),
+                    z(100),
+                    {
+                        add() {
+                            tween(0, 1, 0.5, (t) => transition.opacity = t, easings.easeOutQuad)
+                            wait(0.5, () => {
+                                go("ruins_3", transition)
+                            })
+                        }
+                    }
+                ])
+            })
+    
+        }
+        else if (tuto_over == true && torielGone == true){
+            
+            add([
+                rect(150, 20),
+                pos(75,450),
+                color(255, 255, 255),
+                body({isStatic: true}),
+                area(),
+                rotate(30),
+                "murdiagonalbas"
+            ]);
+            add([
+                rect(150, 20),
+                pos(400,520),
+                color(255, 255, 255),
+                body({isStatic: true}),
+                area(),
+                rotate(-30),
+                "murdiagonalbas"
+            ]);
+            add([
+                rect(550, 20),
+                pos(520,-80),
+                color(255, 255, 255),
+                body({isStatic: true}),
+                area(),
+                rotate(90),
+                "murgauche"
+            ]);
+            add([
+                rect(550, 20),
+                pos(120,-80),
+                color(255, 255, 255),
+                body({isStatic: true}),
+                area(),
+                rotate(90),
+                "murdroite"
+            ]);
+            add([
+                rect(150, 20),
+                pos(130,-80),
+                color(255, 255, 255),
+                body({isStatic: true}),
+                area(),
+                rotate(0),
+                "murhaut"
+            ]);
+            add([
+                rect(150, 20),
+                pos(370,-80),
+                color(255, 255, 255),
+                body({isStatic: true}),
+                area(),
+                rotate(0),
+                "murhaut"
+            ]);
+            const hitboxhaut = add([
+                rect(150, 20),
+                pos(240,-100),
+                color(0, 255, 255),
+                body({isStatic: true}),
+                area(),
+                rotate(0),
+                "hitboxhaut"
+            ]);
+            add([sprite("ruins_2"), pos(0, -350), scale(2.01)])
+            UIManager.playerManager(vec2(305,340))
+            player.play("idleu")
+            const limitUp = 0
+            const limitDown = 295
+            const limitLeft = 280
+            const limitRight = 995
+            const playerX = player.pos.x
+            let playerY = player.pos.y
+            const hitboxback = add([
+                rect(300, 20), // htbox porte
+                pos(175,520),
+                color(0, 0, 0, 0),
+                body({isStatic: true}),
+                area(),
+                "hitboxback",
+            ]);
+            window.player.onUpdate(() => {
+                camPos(playerX+16, playerY-50)
+            })
+            window.player.onUpdate(() => {
+                if(player.pos.y > limitUp && player.pos.y < limitDown){
+                playerY = player.pos.y +50
+                }
+            })
+            player.onCollide('hitboxback', () => {
+                window.currentRoom = "ruins_2"
+                const transition = add([
+                    rect(width(), height()),
+                    color(0,0,0),
+                    opacity(1),
+                    stay(),
+                    fixed(),
+                    z(100),
+                    {
+                        add() {
+                            tween(0, 1, 0.5, (t) => transition.opacity = t, easings.easeOutQuad)
+                            wait(0.5, () => {
+                                go("ruins_1", transition)
+                            })
+                        }
+                    }
+                ])
+            })
+            player.onCollide('hitboxhaut', () => {
+                window.currentRoom = "ruins_2"
+                const transition = add([
+                    rect(width(), height()),
+                    color(0,0,0),
+                    opacity(1),
+                    stay(),
+                    fixed(),
+                    z(100),
+                    {
+                        add() {
+                            tween(0, 1, 0.5, (t) => transition.opacity = t, easings.easeOutQuad)
+                            wait(0.5, () => {
+                                go("ruins_3", transition)
+                            })
+                        }
+                    }
+                ])
+            })
+        }
+        });
 
     },
     flowey_tuto: () => {
+        tween(1, 0, 0.5, (t) => transitionfight.opacity = t, easings.easeOutQuad)
         add([sprite("blackbg"), scale(2), pos(-80,-50)])
         const floweyspritetuto = add([sprite("flowey"), scale(2),pos(280,140)])
         floweyspritetuto.play("idle")
@@ -547,9 +1027,24 @@ const scenes = {
         });
 
         window.nextEvent = 0
+        let speaking = play("floweyspeak", {
+            volume: 1,
+            paused: true,
+            loop:true
+        })
+        onUpdate(() => {
+            if (window.textIsWriting == true) {
+                speaking.paused = false
+            }
+            else if(!window.textIsWriting){
+                speaking.paused = true
+            }
+        })
         window.currentKeyPressHandler = null
         function dialog1(onComplete) {
+            wait(0.8, () => {
             UIManager.displayDialogFight("See that heart ?/bThat is your SOUL,|Your SOUL starts off weak.", vec2(370,135), onComplete)
+            })
             const talk1 = onUpdate(() => {
                 if (window.textIsWriting == true && floweyspritetuto.curAnim() == "idle") {
                     floweyspritetuto.play("talk")
@@ -644,6 +1139,7 @@ const scenes = {
             window.gotHitByFlowey = false
             onCollide("heart", "pellet", () => {
                 window.gotHitByFlowey = true
+                play("damagetaken")
                 shake(20)
             })
             wait(3.5, () => {
@@ -661,6 +1157,7 @@ const scenes = {
                     destroy(window.currentTextDisplay)
                     destroyAll("pellet")
                     playerHP = 1
+                    window.bestfriendost.paused = true
                     floweyspritetuto.play("grin")
                     wait(2, () => {
                         window.heartpreviouspos = vec2(window.heart.pos.x , window.heart.pos.y)
@@ -693,6 +1190,7 @@ const scenes = {
         add([sprite("blackbg"), scale(2), pos(-80,-50)])
         const floweyspritetuto = add([sprite("flowey"), scale(2),pos(280,140)])
         floweyspritetuto.play("sassy")
+        window.bestfriendost.speed = 0.90
         add([text("lv " + playerLV ,{
             size:22,
             font:"trouble",
@@ -831,6 +1329,7 @@ const scenes = {
             window.gotHitByFlowey = false
             onCollide("heart", "pellet", () => {
                 window.gotHitByFlowey = true
+                play("damagetaken")
                 shake(20)
             })
             wait(4, () => {
@@ -849,6 +1348,7 @@ const scenes = {
                     destroy(window.fightdialogbox)
                     destroy(window.currentTextDisplay)
                     destroyAll("pellet")
+                    window.bestfriendost.paused = true
                     playerHP = 1
                     floweyspritetuto.play("grin")
                     wait(2, () => {
@@ -858,6 +1358,19 @@ const scenes = {
                 }
             })
         }
+        let speaking = play("floweyspeak", {
+            volume: 1,
+            paused: true,
+            loop:true
+        })
+        onUpdate(() => {
+            if (window.textIsWriting == true) {
+                speaking.paused = false
+            }
+            else if(!window.textIsWriting){
+                speaking.paused = true
+            }
+        })
         function startSequence1() {
             dialog1(() => {
                     dialog2(() => {
@@ -876,6 +1389,7 @@ const scenes = {
         add([sprite("blackbg"), scale(2), pos(-80,-50)])
         const floweyspritetuto = add([sprite("flowey"), scale(2),pos(280,140)])
         floweyspritetuto.play("pissed")
+        window.bestfriendost.speed = 0.80
         add([text("lv " + playerLV ,{
             size:22,
             font:"trouble",
@@ -1014,7 +1528,15 @@ const scenes = {
             window.gotHitByFlowey = false
             onCollide("heart", "pellet", () => {
                 window.gotHitByFlowey = true
+                play("damagetaken")
                 shake(20)
+            })
+            wait(5, () => {
+                window.bestfriendost.paused = true
+                play("floweyoutro",{
+                    volume: 2
+                })
+                
             })
             wait(6, () => {
                 if (window.gotHitByFlowey == false) {
@@ -1032,6 +1554,7 @@ const scenes = {
                     destroy(window.fightdialogbox)
                     destroy(window.currentTextDisplay)
                     destroyAll("pellet")
+                    window.bestfriendost.paused = true
                     playerHP = 1
                     floweyspritetuto.play("grin")
                     wait(2, () => {
@@ -1041,6 +1564,19 @@ const scenes = {
                 }
             })
         }
+        let speaking = play("floweyspeak", {
+            volume: 0.8,
+            paused: true,
+            loop:true
+        })
+        onUpdate(() => {
+            if (window.textIsWriting == true) {
+                speaking.paused = false
+            }
+            else if(!window.textIsWriting){
+                speaking.paused = true
+            }
+        })
         function startSequence1() {
             dialog1(() => {
                     dialog2(() => {
@@ -1056,7 +1592,7 @@ const scenes = {
     },
     flowey_tuto_3: () => {
         add([sprite("blackbg"), scale(2), pos(-80,-50)])
-        const floweyspritetuto = add([sprite("flowey"), scale(2),pos(280,140)])
+        const floweyspritetuto = add([sprite("flowey"), scale(2),pos(280,140),rotate(0)])
         floweyspritetuto.play("evil")
         add([text("lv " + playerLV ,{
             size:22,
@@ -1157,6 +1693,19 @@ const scenes = {
             })
 
         }
+        let speaking = play("evilfloweyspeak", {
+            volume: 1,
+            paused: true,
+            loop:true
+        })
+        onUpdate(() => {
+            if (window.textIsWriting == true) {
+                speaking.paused = false
+            }
+            else if(!window.textIsWriting){
+                speaking.paused = true
+            }
+        })
         function dialog2(onComplete) {
             floweyspritetuto.play("evil");
             const talk2 = onUpdate(() => {
@@ -1167,8 +1716,14 @@ const scenes = {
             spawnPellets()
             
         }
+        function dialog3(onComplete){
+            wait(2, () => {
+            UIManager.displayDialogFight("Die.", vec2(370,135), onComplete)
+            })
+        }
         function spawnPellets() {
             const circleCenter = vec2(310, 310); // Centre du cercle
+            play("pelletcircle")
             const radius = 100; // Rayon du cercle
             const pelletsCount = 50; // Nombre de pellets à générer
             const angleStep = 360 / pelletsCount; // Étape d'angle entre chaque pellet
@@ -1201,48 +1756,699 @@ const scenes = {
                     }
                 });
             }
+            dialog3(() => {
+                sendPellets(() => {
+
+                })
+            })
         }
         
-        function sendPellets(onComplete){
-            wait(6, () => {
-                if (window.gotHitByFlowey == false) {
-                    destroy(window.fightdialogbox)
-                    destroy(window.currentTextDisplay)
-                    floweyspritetuto.play("evil")
-                    wait(4, () => {
-                        go("flowey_tuto_3")
-                    })
+    function sendPellets(onComplete) {
+    const circleCenter = vec2(310, 310); // Centre du cercle
+    const initialRadius = 100; // Rayon initial du cercle
+    const pelletsCount = 50; // Nombre de pellets à gérer
+    const shrinkDuration = 15; // Durée totale du rétrécissement en secondes
+    const shrinkStep = initialRadius / (shrinkDuration / 0.03); // Combien rétrécir le rayon à chaque étape
+    play("floweylaugh")
+    floweyspritetuto.play("grin");
+            const talk2 = onUpdate(() => {
+                if (floweyspritetuto.curAnim() == "grin") {
+                    floweyspritetuto.play("grinlaugh")
                 }
             })
-            const floweyDie = onUpdate(() => {
-                if (window.gotHitByFlowey == true) {
-                    destroy(window.fightdialogbox)
-                    destroy(window.currentTextDisplay)
-                    destroyAll("pellet")
-                    playerHP = 1
-                    floweyspritetuto.play("grin")
-                    wait(2, () => {
-                    go("flowey_tuto_die")
+
+    // Récupère tous les pellets actuellement dans le cercle
+    const pellets = get("pellet");
+
+    let currentRadius = initialRadius;
+
+    const shrinkCircle = () => {
+        if (currentRadius > 0) {
+            currentRadius -= shrinkStep;
+            pellets.forEach(pellet => {
+                const angleInRadians = Math.atan2(pellet.pos.y - circleCenter.y, pellet.pos.x - circleCenter.x);
+                const newPos = vec2(
+                    circleCenter.x + currentRadius * Math.cos(angleInRadians),
+                    circleCenter.y + currentRadius * Math.sin(angleInRadians)
+                );
+                // Met à jour la position du pellet pour le nouveau rayon
+                pellet.pos = newPos;
+            });
+            // Continue de rétrécir le cercle après un bref délai
+            wait(0.03, shrinkCircle);
+        } else {
+            // Appelle la fonction callback une fois le rétrécissement terminé
+            if (typeof onComplete === 'function') {
+                onComplete();
+            }
+        }
+    };
+
+    // Commence le processus de rétrécissement
+    shrinkCircle();
+    let thisnextEvent = 0
+    heart.onCollide('pellet', () => {
+        thisnextEvent = 2
+        attackStop()
+        shake(10)
+    })
+    wait(4, () => {
+        if(thisnextEvent = 0){
+            attackStop()
+        }
+    })
+}
+        function attackStop(){
+            destroyAll("pellet")
+            let grin = floweyspritetuto.play("grintalkidle")
+            play("heal")
+            
+            wait(2, () => {
+                grin = floweyspritetuto.play("pissed")
+                wait(1, () => {
+                    const fireball = add([
+                        sprite("fireballcutscene"),
+                        pos(500,130),
+                        fixed(),
+                        scale(2),
+                        rotate(0),
+                        "fireball"
+                    ])
+                    fireball.play("blink")
+                    wait(1, () => {
+                        tween(fireball.pos, vec2(330,130),0.8, (p) => fireball.pos = p, easings.linear)
+                        fireball.play("burn")
+                        wait(0.8, () => {
+                            floweyspritetuto.use(sprite("floweyhurt"))
+                            destroyAll("fireball")
+                            play("floweyscream")
+                            tween(floweyspritetuto.pos, vec2(-150,80),0.5, (p) => floweyspritetuto.pos = p, easings.linear)
+                            wait(2, () => {
+                                window.heartpreviouspos = vec2(window.heart.pos.x , window.heart.pos.y)
+                                go("flowey_tuto_toriel")
+                            })
+                        })
                     })
-                }
+                })
             })
         }
+
         function startSequence1() {
             dialog1(() => {
                     dialog2(() => {
-                        sendPellets(() => {
-                            checkCollision(() => {
-
-                            })
-                        })
+                        
                     });
             });
         }
         startSequence1()
     },
     flowey_tuto_die: () => {
+        add([sprite("blackbg"), scale(2), pos(-80,-50)])
+        const floweyspritetuto = add([sprite("flowey"), scale(2),pos(280,140),rotate(0)])
+        floweyspritetuto.play("grin")
+        add([text("lv " + playerLV ,{
+            size:22,
+            font:"trouble",
+        } ),pos(198,398)])
+        add([text("HP" ,{
+            size:10,
+            font:"HP",
+        } ),pos(270,404)])
+        const hp = add([text(playerHP + " / " + playermaxHP,{
+            size:20,
+            font:"trouble",
+        } ),pos((340+((playermaxHP-20)*1.2)),400)])
+        
+        onUpdate(() => {
+            hp.use(text(playerHP + " / " + playermaxHP,{
+                size:20,
+                font:"trouble",
+            } ))
+        });
+        const contour = add([
+            rect(150 + 5*2, 125 + 5*2),
+            pos(242 - 5, 257 - 5),
+            color(255, 255, 255),
+            area(),
+            "border"
+        ]);
+        
+        // Intérieur de la boîte (initial)
+        const interieur = add([
+            rect(150, 125),
+            pos(242, 257),
+            color(0, 0, 0),
+        ]);
+        function updateWalls() {
+            // Supprimer les murs existants pour les recréer
+            destroyAll("wall");
+    
+            // Épaisseur des murs
+            const epaisseurMur = 5;
+    
+            // Création des murs en fonction des dimensions de 'interieur'
+            add([
+                rect(interieur.width, epaisseurMur), // Mur du haut
+                pos(interieur.pos.x, interieur.pos.y - epaisseurMur),
+                color(255, 255, 255, 0),
+                body({isStatic: true}),
+                area(),
+                "wall",
+            ]);
+            add([
+                rect(interieur.width, epaisseurMur), // Mur du bas
+                pos(interieur.pos.x, interieur.pos.y + interieur.height),
+                color(255, 255, 255, 0),
+                body({isStatic: true}),
+                area(),
+                "wall",
+            ]);
+            add([
+                rect(epaisseurMur, interieur.height + 2 * epaisseurMur), // Mur de gauche
+                pos(interieur.pos.x - epaisseurMur, interieur.pos.y - epaisseurMur),
+                color(255, 255, 255, 0),
+                body({isStatic: true}),
+                area(),
+                "wall",
+            ]);
+            add([
+                rect(epaisseurMur, interieur.height + 2 * epaisseurMur), // Mur de droite
+                pos(interieur.pos.x + interieur.width, interieur.pos.y - epaisseurMur),
+                color(255, 255, 255, 0),
+                body({isStatic: true}),
+                area(),
+                "wall",
+            ]);
+        }
+        updateWalls()
+        UIManager.heartManager(window.heartpreviouspos)
+        onUpdate(() => {
+            UIManager.displayplayermaxHP(playermaxHP, vec2(303, 398))
+            UIManager.displayplayerHP(playerHP, vec2(303, 398))
+        });
 
+        window.nextEvent = 0
+        window.currentKeyPressHandler = null
+        function dialog1(onComplete) {
+            UIManager.displayDialogFight("You idiot.|In this world,/p it's killed or BE killed.|Why would ANYONE pass up an opportunity like this!?", vec2(370,135), onComplete)
+            
+
+        }
+        let talk1 = onUpdate(() => {
+            if (window.textIsWriting == true && floweyspritetuto.curAnim() == "grin") {
+                floweyspritetuto.play("grintalk")
+            }
+            else if (window.textIsWriting != true){
+                floweyspritetuto.play("grin")
+            }
+            if(window.nextEvent > 0){
+                floweyspritetuto.play("evil");
+                talk1.cancel()
+            };
+        })
+        let speaking = play("evilfloweyspeak", {
+            volume: 1,
+            paused: true,
+            loop:true
+        })
+        onUpdate(() => {
+            if (window.textIsWriting == true) {
+                speaking.paused = false
+            }
+            else if(!window.textIsWriting){
+                speaking.paused = true
+            }
+        })
+        function dialog2(onComplete) {
+            window.nextEvent = 1
+            floweyspritetuto.play("evil");
+            const talk2 = onUpdate(() => {
+                if (floweyspritetuto.curAnim() == "evil") {
+                    floweyspritetuto.play("evil")
+                }
+            })
+            spawnPellets()
+            
+        }
+        function dialog3(onComplete){
+            wait(2, () => {
+            UIManager.displayDialogFight("Die.", vec2(370,135), onComplete)
+            })
+        }
+        function spawnPellets() {
+            window.nextEvent = 2
+            const circleCenter = vec2(310, 310); // Centre du cercle
+            play("pelletcircle")
+            const radius = 100; // Rayon du cercle
+            const pelletsCount = 50; // Nombre de pellets à générer
+            const angleStep = 360 / pelletsCount; // Étape d'angle entre chaque pellet
+            const delayPerPellet = 0.03; // Délai en secondes entre l'apparition de chaque pellet
+        
+            for (let i = 0; i < pelletsCount; i++) {
+                // Calcul de l'angle pour un placement en contre-sens horaire, en commençant par le bas
+                const angleInDegrees = (360 - (angleStep * i)) % 360;
+                const angleInRadians = angleInDegrees * (Math.PI / 180); // Conversion en radians
+                const pelletPos = vec2(
+                    circleCenter.x + radius * Math.cos(angleInRadians), // Calcul de la position x
+                    circleCenter.y + radius * Math.sin(angleInRadians) // Calcul de la position y
+                );
+        
+                // Fonction pour ajouter un pellet après un délai
+                wait(i * delayPerPellet, () => {
+                    const pellet = add([
+                        sprite("pellets"), 
+                        scale(1),
+                        pos(pelletPos.x, pelletPos.y), 
+                        area(),
+                        "pellet"
+                    ]);
+        
+                    // Alternate between "spin" and "spin2" animations
+                    if (i % 2 === 0) {
+                        pellet.play("spin");
+                    } else {
+                        pellet.play("spin2");
+                    }
+                });
+            }
+            dialog3(() => {
+                sendPellets(() => {
+
+                })
+            })
+        }
+        
+    function sendPellets(onComplete) {
+    const circleCenter = vec2(310, 310); // Centre du cercle
+    const initialRadius = 100; // Rayon initial du cercle
+    const pelletsCount = 50; // Nombre de pellets à gérer
+    const shrinkDuration = 15; // Durée totale du rétrécissement en secondes
+    const shrinkStep = initialRadius / (shrinkDuration / 0.03); // Combien rétrécir le rayon à chaque étape
+    play("floweylaugh")
+    floweyspritetuto.play("grin");
+            const talk2 = onUpdate(() => {
+                if (floweyspritetuto.curAnim() == "grin") {
+                    floweyspritetuto.play("grinlaugh")
+                }
+            })
+
+    // Récupère tous les pellets actuellement dans le cercle
+    const pellets = get("pellet");
+
+    let currentRadius = initialRadius;
+
+    const shrinkCircle = () => {
+        if (currentRadius > 0) {
+            currentRadius -= shrinkStep;
+            pellets.forEach(pellet => {
+                const angleInRadians = Math.atan2(pellet.pos.y - circleCenter.y, pellet.pos.x - circleCenter.x);
+                const newPos = vec2(
+                    circleCenter.x + currentRadius * Math.cos(angleInRadians),
+                    circleCenter.y + currentRadius * Math.sin(angleInRadians)
+                );
+                // Met à jour la position du pellet pour le nouveau rayon
+                pellet.pos = newPos;
+            });
+            // Continue de rétrécir le cercle après un bref délai
+            wait(0.03, shrinkCircle);
+        } else {
+            // Appelle la fonction callback une fois le rétrécissement terminé
+            if (typeof onComplete === 'function') {
+                onComplete();
+            }
+        }
+    };
+
+    // Commence le processus de rétrécissement
+    shrinkCircle();
+    let thisnextEvent = 0
+    heart.onCollide('pellet', () => {
+        thisnextEvent = 2
+        attackStop()
+        shake(10)
+    })
+    wait(4, () => {
+        if(thisnextEvent = 0){
+            attackStop()
+        }
+    })
+}
+        function attackStop(){
+            destroyAll("pellet")
+            let grin = floweyspritetuto.play("grintalkidle")
+            play("heal")
+            playerHP = 20
+            
+            wait(2, () => {
+                grin = floweyspritetuto.play("pissed")
+                wait(1, () => {
+                    const fireball = add([
+                        sprite("fireballcutscene"),
+                        pos(500,130),
+                        fixed(),
+                        scale(2),
+                        rotate(0),
+                        "fireball"
+                    ])
+                    fireball.play("blink")
+                    wait(1, () => {
+                        tween(fireball.pos, vec2(330,130),0.8, (p) => fireball.pos = p, easings.linear)
+                        fireball.play("burn")
+                        wait(0.8, () => {
+                            floweyspritetuto.use(sprite("floweyhurt"))
+                            destroyAll("fireball")
+                            tween(floweyspritetuto.pos, vec2(-150,80),0.5, (p) => floweyspritetuto.pos = p, easings.linear)
+                            wait(2, () => {
+                                window.heartpreviouspos = vec2(window.heart.pos.x , window.heart.pos.y)
+                                go("flowey_tuto_toriel")
+                            })
+                        })
+                    })
+                })
+            })
+        }
+
+        function startSequence1() {
+            dialog1(() => {
+                    dialog2(() => {
+                        
+                    });
+            });
+        }
+        startSequence1()
     },
+    flowey_tuto_toriel: () => {
+        add([sprite("blackbg"), scale(2), pos(-80,-50)])
+        window.currentMusicPlaying = play("fallendown", {
+            loop : true,
+        })
+        const torielspritetuto = add([sprite("torieltuto"), scale(2),pos(600,40),rotate(0)])
+        tween(torielspritetuto.pos, vec2(250,40),1, (p) => torielspritetuto.pos = p, easings.linear)
+        torielspritetuto.play("idle")
+        add([text("lv " + playerLV ,{
+            size:22,
+            font:"trouble",
+        } ),pos(198,398)])
+        add([text("HP" ,{
+            size:10,
+            font:"HP",
+        } ),pos(270,404)])
+        const hp = add([text(playerHP + " / " + playermaxHP,{
+            size:20,
+            font:"trouble",
+        } ),pos((340+((playermaxHP-20)*1.2)),400)])
+        
+        onUpdate(() => {
+            hp.use(text(playerHP + " / " + playermaxHP,{
+                size:20,
+                font:"trouble",
+            } ))
+        });
+        const contour = add([
+            rect(150 + 5*2, 125 + 5*2),
+            pos(242 - 5, 257 - 5),
+            color(255, 255, 255),
+            area(),
+            "border"
+        ]);
+        
+        // Intérieur de la boîte (initial)
+        const interieur = add([
+            rect(150, 125),
+            pos(242, 257),
+            color(0, 0, 0),
+        ]);
+        function updateWalls() {
+            // Supprimer les murs existants pour les recréer
+            destroyAll("wall");
+    
+            // Épaisseur des murs
+            const epaisseurMur = 5;
+    
+            // Création des murs en fonction des dimensions de 'interieur'
+            add([
+                rect(interieur.width, epaisseurMur), // Mur du haut
+                pos(interieur.pos.x, interieur.pos.y - epaisseurMur),
+                color(255, 255, 255, 0),
+                body({isStatic: true}),
+                area(),
+                "wall",
+            ]);
+            add([
+                rect(interieur.width, epaisseurMur), // Mur du bas
+                pos(interieur.pos.x, interieur.pos.y + interieur.height),
+                color(255, 255, 255, 0),
+                body({isStatic: true}),
+                area(),
+                "wall",
+            ]);
+            add([
+                rect(epaisseurMur, interieur.height + 2 * epaisseurMur), // Mur de gauche
+                pos(interieur.pos.x - epaisseurMur, interieur.pos.y - epaisseurMur),
+                color(255, 255, 255, 0),
+                body({isStatic: true}),
+                area(),
+                "wall",
+            ]);
+            add([
+                rect(epaisseurMur, interieur.height + 2 * epaisseurMur), // Mur de droite
+                pos(interieur.pos.x + interieur.width, interieur.pos.y - epaisseurMur),
+                color(255, 255, 255, 0),
+                body({isStatic: true}),
+                area(),
+                "wall",
+            ]);
+        }
+        updateWalls()
+        UIManager.heartManager(window.heartpreviouspos)
+        onUpdate(() => {
+            UIManager.displayplayermaxHP(playermaxHP, vec2(303, 398))
+            UIManager.displayplayerHP(playerHP, vec2(303, 398))
+        });
+
+        window.nextEvent = 0
+        window.currentKeyPressHandler = null
+        function dialog1(onComplete) {
+            UIManager.displayDialogFight("What a terrible creature,/p torturing such a poor,/p innocent youth...|Ah, do not be afraid,/p my child.|I am TORIEL,/p/bcaretaker of the RUINS.|I pass through this place everyday to see if anyone has fallen down.|You are the first human to come here in a long time.|Come!/p/bI will guide you through the catacombs.", vec2(360,105), onComplete)
+            
+
+        }
+        let talk1 = onUpdate(() => {
+            if (window.textIsWriting == true && torielspritetuto.curAnim() == "idle") {
+                torielspritetuto.play("talk")
+            }
+            else if (window.textIsWriting != true){
+                torielspritetuto.play("idle")
+            }
+        })
+        let speaking = play("torielspeak", {
+            volume: 1,
+            paused: true,
+            loop:true
+        })
+        onUpdate(() => {
+            if (window.textIsWriting == true) {
+                speaking.paused = false
+            }
+            else if(!window.textIsWriting){
+                speaking.paused = true
+            }
+        })
+        function goNext(){
+            wait(1, () => {
+            const transition = add([
+                rect(width(), height()),
+                color(0,0,0),
+                opacity(1),
+                stay(),
+                fixed(),
+                z(100),
+                {
+                    add() {
+                        tween(0, 1, 0.5, (t) => transition.opacity = t, easings.easeOutQuad)
+                        window.nextEvent = "tuto_over"
+                        wait(0.5, () => {
+                            go("ruins_2", transition)
+                            const newData = { newValue: "1" };
+                            fetch('/api/updateTempPlotValue', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify(newData),
+                            })
+                            .then(response => response.text())
+                            .then(result => {
+                            console.log(result);
+                            });
+                        })
+                    }
+                }
+            ])
+        })
+
+        }
+        wait(1.2, () => {
+            dialog1(() => {
+                goNext(() => {
+
+                })
+            })
+        })
+    },
+    
+    ruins_3: (transition) => {
+        if(transition){
+            tween(1, 0, 0.5, (t) => transition.opacity = t, easings.easeOutQuad)
+        wait(1, () => {
+            destroy(transition)
+        })
+        }
+        add([
+            rect(150, 20),
+            pos(75,450),
+            color(255, 255, 255),
+            body({isStatic: true}),
+            area(),
+            rotate(30),
+            "murdiagonalbas"
+        ]);
+        add([
+            rect(150, 20),
+            pos(400,520),
+            color(255, 255, 255),
+            body({isStatic: true}),
+            area(),
+            rotate(-30),
+            "murdiagonalbas"
+        ]);
+        add([
+            rect(550, 20),
+            pos(520,-80),
+            color(255, 255, 255),
+            body({isStatic: true}),
+            area(),
+            rotate(90),
+            "murgauche"
+        ]);
+        add([
+            rect(550, 20),
+            pos(120,-80),
+            color(255, 255, 255),
+            body({isStatic: true}),
+            area(),
+            rotate(90),
+            "murdroite"
+        ]);
+        add([
+            rect(150, 20),
+            pos(130,-80),
+            color(255, 255, 255),
+            body({isStatic: true}),
+            area(),
+            rotate(0),
+            "murhaut"
+        ]);
+        add([
+            rect(150, 20),
+            pos(370,-80),
+            color(255, 255, 255),
+            body({isStatic: true}),
+            area(),
+            rotate(0),
+            "murhaut"
+        ]);
+        add([
+            rect(150, 20),
+            pos(240,-100),
+            color(0, 255, 255),
+            body({isStatic: true}),
+            area(),
+            rotate(0),
+            "hitboxhaut"
+        ]);
+        add([sprite("ruins_3"), pos(0, -350), scale(2.01)])
+        const floweyow = add([sprite("torielwalk"), pos(295, 215), scale(2)])
+        UIManager.playerManager(vec2(305,480))
+        player.play("idleu")
+        const limitUp = -200
+        const limitDown = 373
+        const limitLeft = 280
+        const limitRight = 995
+        const playerX = player.pos.x
+        let playerY = player.pos.y
+        const hitboxback = add([
+            rect(300, 20), // htbox porte
+            pos(175,550),
+            color(0, 0, 0, 0),
+            body({isStatic: true}),
+            area(),
+            opacity(0),
+            "hitboxback",
+        ]);
+        window.player.onUpdate(() => {
+            camPos(playerX+16, playerY-110)
+        })
+        window.player.onUpdate(() => {
+            if(player.pos.y > limitUp && player.pos.y < limitDown){
+            playerY = player.pos.y +110
+            }
+        })
+        let speaking = play("torielspeak", {
+            volume: 1,
+            paused: true,
+            loop:true
+        })
+        onUpdate(() => {
+            if (window.textIsWriting == true) {
+                speaking.paused = false
+            }
+            else if(!window.textIsWriting){
+                speaking.paused = true
+            }
+        })
+        let fightStarted = false
+        
+        player.onCollide('hitboxback', () => {
+            window.currentRoom = "ruins_3"
+            const transition = add([
+                rect(width(), height()),
+                color(0,0,0),
+                opacity(1),
+                stay(),
+                fixed(),
+                z(100),
+                {
+                    add() {
+                        tween(0, 1, 0.5, (t) => transition.opacity = t, easings.easeOutQuad)
+                        wait(0.5, () => {
+                            go("ruins_2", transition)
+                        })
+                    }
+                }
+            ])
+        })
+        player.onCollide('hitboxhaut', () => {
+            window.currentRoom = "ruins_2"
+            const transition = add([
+                rect(width(), height()),
+                color(0,0,0),
+                opacity(1),
+                stay(),
+                fixed(),
+                z(100),
+                {
+                    add() {
+                        tween(0, 1, 0.5, (t) => transition.opacity = t, easings.easeOutQuad)
+                        wait(0.5, () => {
+                            go("ruins_3", transition)
+                        })
+                    }
+                }
+            ])
+        })
+    },
+
     snowdin: () => {
         const map = addLevel([
             ""
@@ -1389,4 +2595,4 @@ for (const key in scenes) {
     scene(key, scenes[key])
 }
 
-go("flowey_tuto")
+go("ruins_1")
