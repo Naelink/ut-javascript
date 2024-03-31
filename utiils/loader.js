@@ -2,6 +2,7 @@ export const load = {
     fonts: () => {
         loadFont("trouble", "./assets/TroubleBeneathTheDome.ttf")
         loadFont("deter", "./assets/DTM-Mono.otf")
+        loadFont("detersans", "./assets/DTM-Sans.otf")
         loadFont("hp", "./assets/ut-hp-font.ttf")
         loadFont("dmg", "./assets/undertale-damage.ttf")
         loadFont("dmg2", "./assets/undertale-attack-font.ttf")
@@ -9,6 +10,20 @@ export const load = {
     },
     assets: () => {
         loadSprite("blackbg", "./assets/blackbg.png")
+        loadSprite("whitebg", "./assets/whitebg.png")
+        loadSprite("logo", "./assets/logo.png")
+        loadSprite("intro0", "./assets/spr_introimage_0.png")
+        loadSprite("intro1", "./assets/spr_introimage_1.png")
+        loadSprite("intro2", "./assets/spr_introimage_2.png")
+        loadSprite("intro3", "./assets/spr_introimage_3.png")
+        loadSprite("intro4", "./assets/spr_introimage_4.png")
+        loadSprite("intro5", "./assets/spr_introimage_5.png")
+        loadSprite("intro6", "./assets/spr_introimage_6.png")
+        loadSprite("intro7", "./assets/spr_introimage_7.png")
+        loadSprite("intro8", "./assets/spr_introimage_8.png")
+        loadSprite("intro9", "./assets/spr_introimage_9.png")
+        loadSprite("intro10", "./assets/spr_introimage_10.png")
+        loadSprite("intro11", "./assets/spr_introlast_0.png")
         loadSprite("act_btn", "./assets/act_btn.png")
         loadSprite("act_btn1", "./assets/act_btn1.png")
         loadSprite("fight_btn", "./assets/fight_btn.png")
@@ -19,6 +34,7 @@ export const load = {
         loadSprite("spare_btn1", "./assets/mercy_btn.png")
         loadSprite("box", "./assets/box.png")
         loadSprite("box2", "./assets/box2.png")
+        loadSprite("savebox", "./assets/savebox.png")
         loadSprite("heart", "./assets/heart.png")
         loadSprite("papyrus", "./assets/papyrus.png")
         loadSprite("attackbar", "./assets/attack_bar.png")
@@ -297,6 +313,16 @@ export const load = {
         loadSprite("floweyhurt", "./assets/floweyhurt.png")
         loadSprite("miss", "./assets/miss.png")
         loadSprite("textbubble", "./assets/textbubble.png")
+        loadSprite("save_icon", "./assets/save.png", {
+            sliceX: 2,
+            anims: {
+                "shine": {
+                    from: 0,
+                    to: 1,
+                    speed: 6,
+                    loop : true
+                }}
+            })
         loadSound("uimove", "./assets/ui bip.mp3")
         loadSound("bestfriend", "/assets/bestfriend.mp3")
         loadSound("floweyspeak", "/assets/floweyspeak.mp3")
@@ -310,6 +336,11 @@ export const load = {
         loadSound("torielspeak", "/assets/torielspeak.mp3")
         loadSound("fallendown", "/assets/fallendown.mp3")
         loadSound("damagetaken", "/assets/damagetaken.mp3")
+        loadSound("startmenumusic", "/assets/startmenu.mp3")
+        loadSound("whitewhoosh", "/assets/whitewhoosh.mp3")
+        loadSound("introboom", "/assets/introboom.mp3")
+        loadSound("musicintro", "/assets/onceuponatime.mp3")
+        loadSound("generic2", "/assets/generic2.mp3")
         
     
 

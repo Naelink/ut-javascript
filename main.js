@@ -19,9 +19,789 @@ window.playerHP = 20
 window.BossHP = 680
 window.BossMaxHP = 680
 
+
 const scenes = {
+    pressZ:() => {
+        add([sprite("blackbg")])
+        add([text("[Press Z or ENTER]" ,{
+            size:15,
+            font:"trouble",
+        } ),pos(250,360), color(192,192,192)])
+        onKeyPress("z", () => {
+            go("intro_1")
+        })
+        onKeyPress("enter", () => {
+            go("intro_1")
+        })
+    },
+    intro_1: () => {
+        
+        let musicintroplay = play("musicintro", {
+            paused : false
+        })
+
+        add([sprite("blackbg")])
+        window.spriteintro1 = add([sprite("intro0"), scale(2), pos(0,0), "introframe"])
+        wait(6, () => {
+            window.spriteintro1.use(sprite("intro1"), scale(2))
+            wait(6, () => {
+                window.spriteintro1.use(sprite("intro2"), scale(2))
+                wait(5.5, () => {
+                    window.spriteintro1.use(sprite("intro3"), scale(2))
+                    wait(6, () => {
+                        window.spriteintro1.use(sprite("intro4"), scale(2))
+                        wait(6.3, () => {
+                            window.spriteintro1.use(sprite("intro5"), scale(2))
+                            wait(6, () => {
+                                window.spriteintro1.use(sprite("intro6"), scale(2))
+                                wait(6, () => {
+                                    window.spriteintro1.use(sprite("intro7"), scale(2))
+                                    wait(6.5, () => {
+                                        window.spriteintro1.use(sprite("intro8"), scale(2))
+                                        wait(6.2, () => {
+                                            window.spriteintro1.use(sprite("intro9"), scale(2))
+                                            window.spriteintro2 = add([sprite("intro11"), scale(2), pos(0, -420), opacity(0)])
+                                            wait(6.3, () => {
+                                                const linetop = add([sprite("blackbg"), pos(0,-420)])
+                                                const linebottom = add([sprite("blackbg"), pos(0,280)])
+                                                wait(1, () => {
+                                                    tween(vec2(0,-420), vec2(0,70), 11, (t) => spriteintro2.pos = t, easings.linear)
+                                                    wait(21, () => {
+                                                        destroyIntro()
+                                                    })
+                                                })
+                                                
+                                            })
+                                        })
+                                    })
+                                })
+                            })
+                        })
+                    })
+                })
+            })
+        })
+        let spr1tran = add([sprite("blackbg"), opacity(0)])
+        wait(5.5, () => {
+            tween(0, 1, 0.4, (t) => spr1tran.opacity = t, easings.linear)
+            wait(0.6, () => {
+                tween(1, 0, 0.4, (t) => spr1tran.opacity = t, easings.linear)
+                wait(5.5, () => {
+                    tween(0, 1, 0.4, (t) => spr1tran.opacity = t, easings.linear)
+                    wait(0.6, () => {
+                        tween(1, 0, 0.4, (t) => spr1tran.opacity = t, easings.linear)
+                        wait(4.9, () => {
+                            tween(0, 1, 0.4, (t) => spr1tran.opacity = t, easings.linear)
+                            wait(0.6, () => {
+                                tween(1, 0, 0.4, (t) => spr1tran.opacity = t, easings.linear)
+                                wait(5.3, () => {
+                                    tween(0, 1, 0.4, (t) => spr1tran.opacity = t, easings.linear)
+                                    wait(0.6, () => {
+                                        tween(1, 0, 0.4, (t) => spr1tran.opacity = t, easings.linear)
+                                        wait(5.4, () => {
+                                            tween(0, 1, 0.4, (t) => spr1tran.opacity = t, easings.linear)
+                                            wait(0.6, () => {
+                                                tween(1, 0, 0.4, (t) => spr1tran.opacity = t, easings.linear)
+                                                wait(5.4, () => {
+                                                    tween(0, 1, 0.4, (t) => spr1tran.opacity = t, easings.linear)
+                                                    wait(0.6, () => {
+                                                        tween(1, 0, 0.4, (t) => spr1tran.opacity = t, easings.linear)
+                                                        wait(5.5, () => {
+                                                            tween(0, 1, 0.4, (t) => spr1tran.opacity = t, easings.linear)
+                                                            wait(0.6, () => {
+                                                                tween(1, 0, 0.4, (t) => spr1tran.opacity = t, easings.linear)
+                                                                wait(5.8, () => {
+                                                                    tween(0, 1, 0.4, (t) => spr1tran.opacity = t, easings.linear)
+                                                                    wait(0.6, () => {
+                                                                        tween(1, 0, 0.4, (t) => spr1tran.opacity = t, easings.linear)
+                                                                        wait(5.5, () => {
+                                                                            tween(0, 1, 0.4, (t) => spr1tran.opacity = t, easings.linear)
+                                                                            wait(0.6, () => {
+                                                                                tween(1, 0, 0.4, (t) => spr1tran.opacity = t, easings.linear)
+                                                                                wait(5.5, () => {
+                                                                                    tween(1, 0, 0.4, (t) => spriteintro1.opacity = t, easings.linear)
+                                                                                    wait(0.6, () => {
+                                                                                        tween(0, 1, 0.4, (t) => spriteintro2.opacity = t, easings.linear)
+                                                                                        
+                                                                                    })
+                                                                                })
+                                                                            })
+                                                                        })
+                                                                    })
+                                                                })
+                                                            })
+                                                        })
+                                                    })
+                                                })
+                                            })
+                                        })
+                                    })
+                                })
+                            })
+                        })
+                    })
+                })
+            })
+        })
+        window.dialogdisplay = UIManager.animerTexteIntro("Long ago,/p two races/bruled over Earth:/b/pHUMANS and MONSTERS.", vec2(120, 320))
+        wait(6.3, () => {
+            destroy(dialogdisplay)
+            window.dialogdisplay = UIManager.animerTexteIntro("One day,/p war broke/bout between the two/braces.", vec2(120, 320))
+                wait(6, () => {
+                    destroy(dialogdisplay)
+                    window.dialogdisplay = UIManager.animerTexteIntro("After a long battle,/p/bthe humans were/bvictorious. ", vec2(120, 320))
+                    wait(5.5, () => {
+                        destroy(dialogdisplay)
+                        window.dialogdisplay = UIManager.animerTexteIntro("They sealed the monsters/bunderground with a magic/bspell.", vec2(120, 320))
+                        wait(6, () => {
+                            destroy(dialogdisplay)
+                            window.dialogdisplay = UIManager.animerTexteIntro("Many years later./p/p./p/p.", vec2(120, 320))
+                            wait(5.8, () => {
+                                destroy(dialogdisplay)
+                                window.dialogdisplay = UIManager.animerTexteIntro("      MT.  EBOTT/p/b         20XX", vec2(120, 320))
+                                wait(5.9, () => {
+                                    destroy(dialogdisplay)
+                                    window.dialogdisplay = UIManager.animerTexteIntro("Legends say that those/bwho climb the mountain/bnever return.", vec2(120, 320))
+                                    wait(5.7, () => {
+                                        destroy(dialogdisplay)
+                                    })
+                                })
+                            })
+                        })
+                    })
+                })
+        })
+        function destroyIntro(){
+            onUpdate(() => {
+                destroy(window.dialogdisplay)
+                let spr2tran = add([sprite("blackbg"), opacity(0)])
+                tween(0, 1, 6, (t) => spr2tran.opacity = t, easings.linear)
+                wait(1.5, () => {
+                    go("intro")
+                })
+            })
+        }
+        onKeyPress("z", () => {
+            destroyIntro()
+            musicintroplay.paused = true
+        })
+
+    },
+    intro: () => {
+        add([sprite("blackbg")])
+        play("introboom", {
+            volume: 2
+        })
+        add([sprite("logo"), scale(0.48), pos(30,200)])
+        wait(2, () => {
+            add([text("[Press Z or ENTER]" ,{
+                size:15,
+                font:"trouble",
+            } ),pos(250,360), color(192,192,192)])
+        })
+        onKeyPress("z", () => {
+            window.startmenumusic = play("startmenumusic",{
+                volume: 1,
+                paused : false,
+                loop:true
+            })
+            go("menu")
+            
+        })
+        onKeyPress("enter", () => {
+            window.startmenumusic = play("startmenumusic",{
+                volume: 1,
+                paused : false,
+                loop:true
+            })
+            go("menu")
+        })
+        
+
+    },
     menu: () => {
-    
+        add([sprite("blackbg")])
+        
+        add([text("--- Instruction ---" ,{
+            size:25,
+            font:"detersans",
+        } ),pos(160,80), color(192,192,192)])
+        add([text("[Z or ENTER] - Confirm\n[X] - Cancel\n[C or CTRL] - Menu (to be impl.)\n\n\nWhen HP is 0, you lose." ,{
+            size:25,
+            font:"detersans",
+            lineSpacing: 7,
+        } ),pos(160,144), color(192,192,192)])
+        add([text("Begin game" ,{
+            size:25,
+            font:"detersans",
+            lineSpacing: 7,
+        } ),pos(160,360), color(255,255,0)])
+        onKeyPress("z", () => {
+            go("name_choose")
+        })
+        onKeyPress("enter", () => {
+            go("name_choose")
+        })
+    },
+    name_choose: () => {
+        onUpdate(() => {
+        })
+        add([sprite("blackbg"), scale(2), pos(-100,-100)])
+        add([text("Name the fallen human." ,{
+            size:25,
+            font:"detersans",
+            lineSpacing: 7,
+        } ),pos(190,70), color(255,255,255)])
+        class UI {
+            constructor() {
+                this.buttons = [
+                    { id: "Quit",  pos: [135, 380], color:rgb(255, 255, 255), colorSelected : rgb(255,255,0), isSelected: true, isPressed: false },
+                    { id: "Backspace", pos: [240, 380], color:rgb(255, 255, 255),colorSelected : rgb(255,255,0),isSelected: false, isPressed: false },
+                    { id: "Done", pos: [425, 380], color:rgb(255, 255, 255),colorSelected : rgb(255,255,0),isSelected: false, isPressed: false },
+                ];
+                this.letters = [
+                    { id: "A",  pos: [135, 150], color:rgb(255, 255, 255), colorSelected : rgb(255,255,0), isSelected: false, isPressed: false },
+                    { id: "B", pos: [195, 150], color:rgb(255, 255, 255),colorSelected : rgb(255,255,0),isSelected: false, isPressed: false },
+                    { id: "C", pos: [255, 150], color:rgb(255, 255, 255),colorSelected : rgb(255,255,0),isSelected: false, isPressed: false },
+                    { id: "D", pos: [315, 150], color:rgb(255, 255, 255),colorSelected : rgb(255,255,0),isSelected: false, isPressed: false },
+                    { id: "E", pos: [375, 150], color:rgb(255, 255, 255),colorSelected : rgb(255,255,0),isSelected: false, isPressed: false },
+                    { id: "F", pos: [435, 150], color:rgb(255, 255, 255),colorSelected : rgb(255,255,0),isSelected: false, isPressed: false },
+                    { id: "G", pos: [495, 150], color:rgb(255, 255, 255),colorSelected : rgb(255,255,0),isSelected: false, isPressed: false },
+
+                    { id: "H", pos: [135, 175], color:rgb(255, 255, 255),colorSelected : rgb(255,255,0),isSelected: false, isPressed: false },
+                    { id: "I", pos: [195, 175], color:rgb(255, 255, 255),colorSelected : rgb(255,255,0),isSelected: false, isPressed: false },
+                    { id: "J", pos: [255, 175], color:rgb(255, 255, 255),colorSelected : rgb(255,255,0),isSelected: false, isPressed: false },
+                    { id: "K", pos: [315, 175], color:rgb(255, 255, 255),colorSelected : rgb(255,255,0),isSelected: false, isPressed: false },
+                    { id: "L", pos: [375, 175], color:rgb(255, 255, 255),colorSelected : rgb(255,255,0),isSelected: false, isPressed: false },
+                    { id: "M", pos: [435, 175], color:rgb(255, 255, 255),colorSelected : rgb(255,255,0),isSelected: false, isPressed: false },
+                    { id: "N", pos: [495, 175], color:rgb(255, 255, 255),colorSelected : rgb(255,255,0),isSelected: false, isPressed: false },
+
+                    { id: "O", pos: [135, 200], color:rgb(255, 255, 255),colorSelected : rgb(255,255,0),isSelected: false, isPressed: false },
+                    { id: "P", pos: [195, 200], color:rgb(255, 255, 255),colorSelected : rgb(255,255,0),isSelected: false, isPressed: false },
+                    { id: "Q", pos: [255, 200], color:rgb(255, 255, 255),colorSelected : rgb(255,255,0),isSelected: false, isPressed: false },
+                    { id: "R", pos: [315, 200], color:rgb(255, 255, 255),colorSelected : rgb(255,255,0),isSelected: false, isPressed: false },
+                    { id: "S", pos: [375, 200], color:rgb(255, 255, 255),colorSelected : rgb(255,255,0),isSelected: false, isPressed: false },
+                    { id: "T", pos: [435, 200], color:rgb(255, 255, 255),colorSelected : rgb(255,255,0),isSelected: false, isPressed: false },
+                    { id: "U", pos: [495, 200], color:rgb(255, 255, 255),colorSelected : rgb(255,255,0),isSelected: false, isPressed: false },
+
+                    { id: "V", pos: [135, 225], color:rgb(255, 255, 255),colorSelected : rgb(255,255,0),isSelected: false, isPressed: false },
+                    { id: "W", pos: [195, 225], color:rgb(255, 255, 255),colorSelected : rgb(255,255,0),isSelected: false, isPressed: false },
+                    { id: "X", pos: [255, 225], color:rgb(255, 255, 255),colorSelected : rgb(255,255,0),isSelected: false, isPressed: false },
+                    { id: "Y", pos: [315, 225], color:rgb(255, 255, 255),colorSelected : rgb(255,255,0),isSelected: false, isPressed: false },
+                    { id: "Z", pos: [375, 225], color:rgb(255, 255, 255),colorSelected : rgb(255,255,0),isSelected: false, isPressed: false },
+                    
+                    { id: "a",  pos: [135, 260], color:rgb(255, 255, 255), colorSelected : rgb(255,255,0), isSelected: false, isPressed: false },
+                    { id: "b", pos: [195, 260], color:rgb(255, 255, 255),colorSelected : rgb(255,255,0),isSelected: false, isPressed: false },
+                    { id: "c", pos: [255, 260], color:rgb(255, 255, 255),colorSelected : rgb(255,255,0),isSelected: false, isPressed: false },
+                    { id: "d", pos: [315, 260], color:rgb(255, 255, 255),colorSelected : rgb(255,255,0),isSelected: false, isPressed: false },
+                    { id: "e", pos: [375, 260], color:rgb(255, 255, 255),colorSelected : rgb(255,255,0),isSelected: false, isPressed: false },
+                    { id: "f", pos: [435, 260], color:rgb(255, 255, 255),colorSelected : rgb(255,255,0),isSelected: false, isPressed: false },
+                    { id: "g", pos: [495, 260], color:rgb(255, 255, 255),colorSelected : rgb(255,255,0),isSelected: false, isPressed: false },
+
+                    { id: "h",  pos: [135, 285], color:rgb(255, 255, 255), colorSelected : rgb(255,255,0), isSelected: false, isPressed: false },
+                    { id: "i", pos: [195, 285], color:rgb(255, 255, 255),colorSelected : rgb(255,255,0),isSelected: false, isPressed: false },
+                    { id: "j", pos: [255, 285], color:rgb(255, 255, 255),colorSelected : rgb(255,255,0),isSelected: false, isPressed: false },
+                    { id: "k", pos: [315, 285], color:rgb(255, 255, 255),colorSelected : rgb(255,255,0),isSelected: false, isPressed: false },
+                    { id: "l", pos: [375, 285], color:rgb(255, 255, 255),colorSelected : rgb(255,255,0),isSelected: false, isPressed: false },
+                    { id: "m", pos: [435, 285], color:rgb(255, 255, 255),colorSelected : rgb(255,255,0),isSelected: false, isPressed: false },
+                    { id: "n", pos: [495, 285], color:rgb(255, 255, 255),colorSelected : rgb(255,255,0),isSelected: false, isPressed: false },
+
+                    { id: "o",  pos: [135, 310], color:rgb(255, 255, 255), colorSelected : rgb(255,255,0), isSelected: false, isPressed: false },
+                    { id: "p", pos: [195, 310], color:rgb(255, 255, 255),colorSelected : rgb(255,255,0),isSelected: false, isPressed: false },
+                    { id: "q", pos: [255, 310], color:rgb(255, 255, 255),colorSelected : rgb(255,255,0),isSelected: false, isPressed: false },
+                    { id: "r", pos: [315, 310], color:rgb(255, 255, 255),colorSelected : rgb(255,255,0),isSelected: false, isPressed: false },
+                    { id: "s", pos: [375, 310], color:rgb(255, 255, 255),colorSelected : rgb(255,255,0),isSelected: false, isPressed: false },
+                    { id: "t", pos: [435, 310], color:rgb(255, 255, 255),colorSelected : rgb(255,255,0),isSelected: false, isPressed: false },
+                    { id: "u", pos: [495, 310], color:rgb(255, 255, 255),colorSelected : rgb(255,255,0),isSelected: false, isPressed: false },
+
+                    { id: "v",  pos: [135, 335], color:rgb(255, 255, 255), colorSelected : rgb(255,255,0), isSelected: false, isPressed: false },
+                    { id: "w", pos: [195, 335], color:rgb(255, 255, 255),colorSelected : rgb(255,255,0),isSelected: false, isPressed: false },
+                    { id: "x", pos: [255, 335], color:rgb(255, 255, 255),colorSelected : rgb(255,255,0),isSelected: false, isPressed: false },
+                    { id: "y", pos: [315, 335], color:rgb(255, 255, 255),colorSelected : rgb(255,255,0),isSelected: false, isPressed: false },
+                    { id: "z", pos: [375, 335], color:rgb(255, 255, 255),colorSelected : rgb(255,255,0),isSelected: false, isPressed: false },
+
+                ];
+                this.status = "Quit";
+            }
+            init() {
+                this.buttons.forEach(btn => {
+                    const position = vec2(btn.pos[0], btn.pos[1]);
+                    btn.entity = add([
+                        text(btn.id, {
+                            font : "detersans",
+                            size : 25
+                        }),
+                        pos(position),
+                        color(btn.isSelected ? btn.colorSelected : btn.color),
+                    ]);
+                });
+                this.letters.forEach(ltr => {
+                    const position = vec2(ltr.pos[0], ltr.pos[1]);
+                    ltr.entity = add([
+                        text(ltr.id, {
+                            font : "detersans",
+                            size : 25
+                        }),
+                        pos(position),
+                        color(ltr.isSelected ? ltr.colorSelected : ltr.color),
+                    ]);
+                });
+                this.setupInputHandlers()
+                
+            }
+            
+            setupInputHandlers() {
+                if (this.status=="Quit"||this.status=="Backspace"||this.status=="Done"){}
+                onKeyPress("right", () => {
+                    if (this.status=="Quit"||this.status=="Backspace"||this.status=="Done"){
+                    this.moveCursor("right");}
+                    else{
+                        this.moveCursorLetter("right")
+                    }
+                });
+                onKeyPress("left", () => {
+                    if (this.status=="Quit"||this.status=="Backspace"||this.status=="Done"){
+                    this.moveCursor("left");}
+                    else{
+                        this.moveCursorLetter("left")
+                    }
+                });
+                onKeyPress("up", () => {
+                    if (this.status!="Quit"&&this.status!="Backspace"&&this.status!="Done"){
+                    this.moveCursorLetter("up");}
+                    else{
+                        this.moveCursor("up")
+                    }
+                });
+                onKeyPress("down", () => {
+                    if (this.status!="Quit"&&this.status!="Backspace"&&this.status!="Done"){
+                    this.moveCursorLetter("down");}
+                    else{
+                        this.moveCursor("down")
+                    }
+                });
+                onKeyPress("z", () => {
+                    if (this.status!="Quit"&&this.status!="Backspace"&&this.status!="Done"&&(charName.length<6)){
+                    this.activateLetter();}
+                    else if(this.status == "Backspace"){
+                        this.removeLetter()
+                    }
+                    else if(this.status == "Quit"){
+                        go("menu")
+                    }
+                    else if(this.status == "Done" && charName.length > 0){
+                        go("name_confirm")
+                    }
+
+                });
+                onKeyPress("enter", () => {
+                    if (this.status!="Quit"&&this.status!="Backspace"&&this.status!="Done"&&(charName.length<6)){
+                    this.activateLetter();}
+                    else if(this.status == "Backspace"){
+                        this.removeLetter()
+                    }
+                    else if(this.status == "Quit"){
+                        go("menu")
+                    }
+                    else if(this.status == "Done"){
+                        go("name_confirm", charName)
+                    }
+
+                });
+                onKeyPress("x", () => {
+                    this.removeLetter()
+                });
+            }
+            moveCursor(direction) {
+                let currentIndex = this.buttons.findIndex(btn => btn.isSelected);
+                let newIndex = currentIndex;
+                if (direction === "right") {
+                    newIndex = (currentIndex + 1) % this.buttons.length;
+                } else if (direction === "left") {
+                    newIndex = (currentIndex - 1 + this.buttons.length) % this.buttons.length;
+                }
+                this.buttons[currentIndex].isSelected = false;
+                this.buttons[newIndex].isSelected = true;
+                this.status = this.buttons[newIndex].id;
+                if (direction === "up"&&this.status=="Quit") {
+                    this.letters.forEach(ltr => {
+                        if (ltr.id == "v") {
+                            ltr.isSelected = true;
+                            this.status="v"
+                            this.updateLetters();
+                        }
+                        
+                    this.buttons[newIndex].isSelected = false;
+                    });
+                }
+                else if (direction === "up"&&this.status=="Backspace") {
+                    this.buttons[newIndex].isSelected = false;
+                    this.letters.forEach(ltr => {
+                        if (ltr.id == "x") {
+                            ltr.isSelected = true;
+                            this.status="x"
+                            this.updateLetters();
+                        }
+                        
+                    this.buttons[newIndex].isSelected = false;
+                    });
+                }
+                else if (direction === "up"&&this.status=="Done") {
+                this.buttons[newIndex].isSelected = false;
+                this.letters.forEach(ltr => {
+                    if (ltr.id == "t") {
+                        ltr.isSelected = true;
+                        this.status="t"
+                        this.updateLetters();
+                    }
+                    
+                this.buttons[newIndex].isSelected = false;
+                });
+                }
+                else if (direction === "down"&&this.status=="Quit") {
+                    this.buttons[newIndex].isSelected = false;
+                    this.letters.forEach(ltr => {
+                        if (ltr.id == "A") {
+                            ltr.isSelected = true;
+                            this.status="A"
+                            this.updateLetters();
+                        }
+                        
+                    this.buttons[newIndex].isSelected = false;
+                    });
+                }
+                else if (direction === "down"&&this.status=="Backspace") {
+                    this.buttons[newIndex].isSelected = false;
+                    this.letters.forEach(ltr => {
+                        if (ltr.id == "C") {
+                            ltr.isSelected = true;
+                            this.status="C"
+                            this.updateLetters();
+                        }
+                        
+                    this.buttons[newIndex].isSelected = false;
+                    });
+                }
+                else if (direction === "down"&&this.status=="Done") {
+                    this.buttons[newIndex].isSelected = false;
+                    this.letters.forEach(ltr => {
+                        if (ltr.id == "F") {
+                            ltr.isSelected = true;
+                            this.status="F"
+                            this.updateLetters();
+                        }
+                        
+                    this.buttons[newIndex].isSelected = false;
+                    });
+                }
+                this.updateButtons();
+            }
+            
+            moveCursorLetter(direction) {
+                let currentIndex = this.letters.findIndex(btn => btn.isSelected);
+                let newIndex = currentIndex;
+                if (direction === "right" && this.status !="z") {
+                    newIndex = (currentIndex + 1) % this.letters.length;
+                    this.letters[currentIndex].isSelected = false;
+                    this.status = this.letters[newIndex].id;
+                    this.letters[newIndex].isSelected = true;
+                    this.updateLetters();
+                    return;
+                } else if (direction === "left"&& this.status !="A") {
+                    newIndex = (currentIndex - 1 + this.letters.length) % this.letters.length;
+                    this.letters[currentIndex].isSelected = false;
+                    this.status = this.letters[newIndex].id;
+                    this.letters[newIndex].isSelected = true;
+                    this.updateLetters();
+                    return;
+                }
+                else if (direction === "up" && this.status!="a"&& this.status!="b"&& this.status!="c"&& this.status!="d"&& this.status!="e"&& this.status!="f"&& this.status!="g" ) {
+                    newIndex = (currentIndex - 7 + this.letters.length) % this.letters.length;
+                    this.letters[currentIndex].isSelected = false;
+                    this.status = this.letters[newIndex].id;
+                    this.letters[newIndex].isSelected = true;
+                    this.updateLetters();
+                    return;
+                }
+                else if ((direction === "up" && this.status == "a")||(direction === "up" && this.status == "b")||(direction === "up" && this.status == "c")||(direction === "up" && this.status == "d")||(direction === "up" && this.status == "d")||(direction === "up" && this.status == "e")) {
+                    newIndex = (currentIndex - 5 + this.letters.length) % this.letters.length;
+                    this.letters[currentIndex].isSelected = false;
+                    this.status = this.letters[newIndex].id;
+                    this.letters[newIndex].isSelected = true;
+                    this.updateLetters();
+                    return;
+                }
+                else if ((direction === "up" && this.status == "f")||(direction === "up" && this.status == "g")) {
+                    newIndex = (currentIndex - 12 + this.letters.length) % this.letters.length;
+                    this.letters[currentIndex].isSelected = false;
+                    this.status = this.letters[newIndex].id;
+                    this.letters[newIndex].isSelected = true;
+                    this.updateLetters();
+                    return;
+                }
+                else if (direction === "down" && this.status!="V"&& this.status!="W"&& this.status!="X"&& this.status!="Y"&& this.status!="Z"&& this.status!="T"&& this.status!="U"&& this.status!="v"&& this.status!="w"&& this.status!="x"&& this.status!="y"&& this.status!="z"&& this.status!="t"&& this.status!="u") {
+                    newIndex = (currentIndex + 7 + this.letters.length) % this.letters.length;
+                    this.letters[currentIndex].isSelected = false;
+                    this.status = this.letters[newIndex].id;
+                    this.letters[newIndex].isSelected = true;
+                    this.updateLetters();
+                    return;
+                }
+                else if ((direction === "down" && this.status == "V")||(direction === "down" && this.status == "W")||(direction === "down" && this.status == "X")||(direction === "down" && this.status == "Y")||(direction === "down" && this.status == "Z")) {
+                    newIndex = (currentIndex + 5 + this.letters.length) % this.letters.length;
+                    this.letters[currentIndex].isSelected = false;
+                    this.status = this.letters[newIndex].id;
+                    this.letters[newIndex].isSelected = true;
+                    this.updateLetters();
+                    return;
+                }
+                else if ((direction === "down" && this.status == "T")||(direction === "down" && this.status == "U")) {
+                    newIndex = (currentIndex + 12 + this.letters.length) % this.letters.length;
+                    this.letters[currentIndex].isSelected = false;
+                    this.status = this.letters[newIndex].id;
+                    this.letters[newIndex].isSelected = true;
+                    this.updateLetters();
+                    return;
+                } 
+                if ((direction === "down" && this.status == "v")||(direction === "down" && this.status == "w")) {
+                    this.letters[newIndex].isSelected = false;
+                    this.buttons.forEach(btn => {
+                        if (btn.id == "Quit") {
+                            btn.isSelected = true;
+                            this.status="Quit"
+                            this.updateButtons();
+                        }
+                        
+                    this.letters[newIndex].isSelected = false;
+                    });
+                }
+                else if((direction === "down" && this.status == "x")||(direction === "down" && this.status == "y")||(direction === "down" && this.status == "z")) {
+                    this.letters[newIndex].isSelected = false;
+                    this.buttons.forEach(btn => {
+                        if (btn.id == "Backspace") {
+                            btn.isSelected = true;
+                            this.status="Backspace"
+                            this.updateButtons();
+                        }
+                        
+                    this.letters[newIndex].isSelected = false;
+                    });
+                }
+                else if((direction === "down" && this.status == "t")||(direction === "down" && this.status == "u")) {
+                    this.letters[newIndex].isSelected = false;
+                    this.buttons.forEach(btn => {
+                        if (btn.id == "Done") {
+                            btn.isSelected = true;
+                            this.status="Done"
+                            this.updateButtons();
+                        }
+                        
+                    this.letters[newIndex].isSelected = false;
+                    });
+                }
+                else if ((direction === "up" && this.status == "A")||(direction === "up" && this.status == "B")) {
+                    this.letters[newIndex].isSelected = false;
+                    this.buttons.forEach(btn => {
+                        if (btn.id == "Quit") {
+                            btn.isSelected = true;
+                            this.status="Quit"
+                            this.updateButtons();
+                        }
+                        
+                    this.letters[newIndex].isSelected = false;
+                    });
+                }
+                else if((direction === "up" && this.status == "C")||(direction === "up" && this.status == "D")||(direction === "up" && this.status == "E")) {
+                    this.letters[newIndex].isSelected = false;
+                    this.buttons.forEach(btn => {
+                        if (btn.id == "Backspace") {
+                            btn.isSelected = true;
+                            this.status="Backspace"
+                            this.updateButtons();
+                        }
+                        
+                    this.letters[newIndex].isSelected = false;
+                    });
+                }
+                else if((direction === "up" && this.status == "F")||(direction === "up" && this.status == "G")) {
+                    this.letters[newIndex].isSelected = false;
+                    this.buttons.forEach(btn => {
+                        if (btn.id == "Done") {
+                            btn.isSelected = true;
+                            this.status="Done"
+                            this.updateButtons();
+                        }
+                        
+                    this.letters[newIndex].isSelected = false;
+                    });
+                }
+                
+                this.updateLetters();
+            }
+            updateButtons() {
+                this.buttons.forEach((btn, index) => {
+                    const isSelected = btn.isSelected;
+                    btn.entity.use(color(isSelected ? btn.colorSelected : btn.color));
+                });
+            }
+            updateLetters() {
+                this.letters.forEach((btn, index) => {
+                    const isSelected = btn.isSelected;
+                    btn.entity.use(color(isSelected ? btn.colorSelected : btn.color));
+                });
+            }
+            activateLetter(){
+                charName += this.status;
+            }
+            removeLetter(){
+                charName = charName.slice(0, -1);
+            }
+        }
+        window.charName = ""
+                let displayText = add([text(charName ,{
+                    size:25,
+                    font:"detersans",
+                    lineSpacing: 7,
+                } ),pos(280,110), color(255,255,255)])
+                onUpdate(() => {
+                    displayText.use(text(charName ,{
+                        size:25,
+                        font:"detersans",
+                        lineSpacing: 7,
+                    } ))
+                })
+        const ui = new UI(); 
+        ui.init();
+        
+    },
+    name_confirm: () => {
+        add([sprite("blackbg"), scale(2), pos(-100,-100)])
+        add([text("Is this name correct ?" ,{
+            size:25,
+            font:"detersans",
+            lineSpacing: 7,
+        } ),pos(190,70), color(255,255,255)])
+        let displayText = add([text(charName ,{
+            size:25,
+            font:"detersans",
+            lineSpacing: 7,
+        } ),pos(280,110), color(255,255,255), scale(1)])
+        tween(1, 3, 4, (t) => displayText.scale = t, easings.easeOutQuad) 
+        tween(280, 220, 4, (t) => displayText.pos.x = t, easings.easeOutQuad)
+        tween(110, 250, 4, (t) => displayText.pos.y = t, easings.easeOutQuad)       
+        class UI {
+            constructor() {
+                this.buttons = [
+                    { id: "No",  pos: [170, 380], color:rgb(255, 255, 255), colorSelected : rgb(255,255,0), isSelected: true, isPressed: false },
+                    { id: "Yes", pos: [450, 380], color:rgb(255, 255, 255),colorSelected : rgb(255,255,0),isSelected: false, isPressed: false },
+                ];
+                this.status = "No"
+            }
+            init() {
+                this.buttons.forEach(btn => {
+                    const position = vec2(btn.pos[0], btn.pos[1]);
+                    btn.entity = add([
+                        text(btn.id, {
+                            font : "detersans",
+                            size : 25
+                        }),
+                        pos(position),
+                        color(btn.isSelected ? btn.colorSelected : btn.color),
+                    ]);
+                });
+                this.setupInputHandlers()
+            }
+            moveCursor(direction) {
+                let currentIndex = this.buttons.findIndex(btn => btn.isSelected);
+                let newIndex = currentIndex;
+                if (direction === "right") {
+                    newIndex = (currentIndex + 1) % this.buttons.length;
+                } else if (direction === "left") {
+                    newIndex = (currentIndex - 1 + this.buttons.length) % this.buttons.length;
+                }
+                this.buttons[currentIndex].isSelected = false;
+                this.buttons[newIndex].isSelected = true;
+                this.status = this.buttons[newIndex].id;
+                this.updateButtons()
+            }
+            setupInputHandlers() {
+                onKeyPress("right", () => {
+                    if (this.status!="lauchedGame"){
+                    if (this.status=="No"||this.status=="Yes"){
+                    this.moveCursor("right");}}
+                });
+                onKeyPress("left", () => {
+                    if (this.status!="lauchedGame"){
+                    if (this.status=="No"||this.status=="Yes"){
+                    this.moveCursor("left");}}
+                });
+                onKeyPress("z", () => {
+                    if (this.status!="lauchedGame"){
+                    if (this.status=="No"){
+                    go("name_choose");}
+                    else {
+                        window.startmenumusic.paused = true
+                        this.status = "launchedGame"
+                        tween(0, 1, 5, (t) => transitionwhite.opacity = t, easings.linear)
+                        play("whitewhoosh", {
+                            volume : 2
+                        })
+                        const newData = { newValue: charName };
+                            fetch('/api/createName', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify(newData),
+                            })
+                            .then(response => response.text())
+                            .then(result => {
+                            console.log(result);
+                            });
+                        wait(7, () => {
+                            go("prepare_game")
+                        })
+                    }}
+                });
+                onKeyPress("enter", () => {
+                    if (this.status!="lauchedGame"){
+                    if (this.status=="No"){
+                    go("name_choose");}
+                    else {
+                        this.status = "launchedGame"
+                        tween(0, 1, 5, (t) => transitionwhite.opacity = t, easings.linear)
+                        const newData = { newValue: charName };
+                            fetch('/api/createName', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify(newData),
+                            })
+                            .then(response => response.text())
+                            .then(result => {
+                            console.log(result);
+                            });
+                        window.startmenumusic.paused = true
+                        wait(7, () => {
+                            go("prepare_game")
+                        })
+                    }}
+                });
+            }
+            updateButtons() {
+                this.buttons.forEach((btn, index) => {
+                    const isSelected = btn.isSelected;
+                    btn.entity.use(color(isSelected ? btn.colorSelected : btn.color));
+                });
+            }
+        }
+        const ui = new UI(); 
+        ui.init();
+        let transitionwhite = add([sprite("whitebg"), scale(2), pos(-100,-100), opacity(0)])
+
+        
+
     },
     1: () => {
         let enemyName="Papyrus"
@@ -256,6 +1036,23 @@ const scenes = {
         });
     
     },
+    prepare_game: () => {
+        add([sprite("whitebg"), scale(2), pos(-100,-100), opacity(1)])
+        const newData = { newValue: "0" };
+        fetch('/api/updateTempPlotValue', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newData),
+        })
+        .then(response => response.text())
+        .then(result => {
+        console.log(result);
+        });
+        go("ruins_1")
+        
+    },
     ruins_1: (transition) => {
         if(transition){
             tween(1, 0, 0.5, (t) => transition.opacity = t, easings.easeOutQuad)
@@ -263,19 +1060,6 @@ const scenes = {
             destroy(transition)
         })
         }
-        const newData = { newValue: "0" };
-                            fetch('/api/updateTempPlotValue', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                            },
-                            body: JSON.stringify(newData),
-                            })
-                            .then(response => response.text())
-                            .then(result => {
-                            console.log(result);
-                            });
-        
         add([
             rect(300, 20), // Mur du haut
             pos(150,60),
@@ -435,6 +1219,7 @@ const scenes = {
                 z(100),
                 {
                     add() {
+                        window.currentRoom= "ruins_1"
                         tween(0, 1, 0.5, (t) => transition.opacity = t, easings.easeOutQuad)
                         wait(0.5, () => {
                             go("ruins_2", transition)
@@ -445,8 +1230,9 @@ const scenes = {
         });
     },
     ruins_2: ( transition ) => {
+        add([sprite("blackbg"), scale(2), pos(-100,-100), opacity(1)])
         if(transition){
-            tween(1, 0, 0.5, (t) => transition.opacity = t, easings.easeOutQuad)
+            tween(1, 0, 1, (t) => transition.opacity = t, easings.easeOutQuad)
         wait(1, () => {
             destroy(transition)
         })
@@ -874,8 +1660,15 @@ const scenes = {
                 "hitboxhaut"
             ]);
             add([sprite("ruins_2"), pos(0, -350), scale(2.01)])
-            UIManager.playerManager(vec2(305,340))
+            if(window.currentRoom == "ruins_3"){
+                UIManager.playerManager(vec2(305,10))
+            player.play("idled")
+            }
+            
+            else if(window.currentRoom == "ruins_1"){
+            UIManager.playerManager(vec2(305,390))
             player.play("idleu")
+            }
             const limitUp = 0
             const limitDown = 295
             const limitLeft = 280
@@ -936,6 +1729,7 @@ const scenes = {
                     }
                 ])
             })
+        
         }
         });
 
@@ -2117,6 +2911,7 @@ const scenes = {
                         wait(0.8, () => {
                             floweyspritetuto.use(sprite("floweyhurt"))
                             destroyAll("fireball")
+                            play("floweyscream")
                             tween(floweyspritetuto.pos, vec2(-150,80),0.5, (p) => floweyspritetuto.pos = p, easings.linear)
                             wait(2, () => {
                                 window.heartpreviouspos = vec2(window.heart.pos.x , window.heart.pos.y)
@@ -2306,11 +3101,29 @@ const scenes = {
         }
         add([
             rect(150, 20),
-            pos(75,450),
+            pos(105,470),
             color(255, 255, 255),
             body({isStatic: true}),
             area(),
-            rotate(30),
+            rotate(10),
+            "murdiagonalbas"
+        ]);
+        add([
+            rect(150, 20),
+            pos(265,510),
+            color(255, 255, 255),
+            body({isStatic: true}),
+            area(),
+            rotate(90),
+            "murdiagonalbas"
+        ]);
+        add([
+            rect(150, 20),
+            pos(385,510),
+            color(255, 255, 255),
+            body({isStatic: true}),
+            area(),
+            rotate(90),
             "murdiagonalbas"
         ]);
         add([
@@ -2323,8 +3136,8 @@ const scenes = {
             "murdiagonalbas"
         ]);
         add([
-            rect(550, 20),
-            pos(520,-80),
+            rect(350, 20),
+            pos(520,100),
             color(255, 255, 255),
             body({isStatic: true}),
             area(),
@@ -2333,7 +3146,7 @@ const scenes = {
         ]);
         add([
             rect(550, 20),
-            pos(120,-80),
+            pos(120,100),
             color(255, 255, 255),
             body({isStatic: true}),
             area(),
@@ -2342,7 +3155,88 @@ const scenes = {
         ]);
         add([
             rect(150, 20),
-            pos(130,-80),
+            pos(50,-120),
+            color(255, 255, 255),
+            body({isStatic: true}),
+            area(),
+            rotate(-30),
+            "murdiagonalhaut"
+        ]);
+        add([
+            rect(150, 20),
+            pos(450,-210),
+            color(255, 255, 255),
+            body({isStatic: true}),
+            area(),
+            rotate(30),
+            "murdiagonalhaut"
+        ]);
+        add([
+            rect(120, 20),
+            pos(50,0),
+            color(255, 255, 255),
+            body({isStatic: true}),
+            area(),
+            rotate(45),
+            "murdiagonalhaut"
+        ]);
+        add([
+            rect(100, 20),
+            pos(490,80),
+            color(255, 255, 255),
+            body({isStatic: true}),
+            area(),
+            rotate(-45),
+            "murdiagonalhaut"
+        ]);
+        add([
+            rect(70, 10),
+            pos(190,-50),
+            color(255, 255, 255),
+            body({isStatic: true}),
+            area(),
+            rotate(45),
+            "murdiagonalhaut"
+        ]);
+        add([
+            rect(70, 10),
+            pos(410, -10),
+            color(255, 255, 255),
+            body({isStatic: true}),
+            area(),
+            rotate(-45),
+            "murdiagonalhaut"
+        ]);
+        add([
+            rect(150, 20),
+            pos(75,-100),
+            color(255, 255, 255),
+            body({isStatic: true}),
+            area(),
+            rotate(90),
+            "murgauche"
+        ]);
+        add([
+            rect(150, 20),
+            pos(575,-100),
+            color(255, 255, 255),
+            body({isStatic: true}),
+            area(),
+            rotate(90),
+            "murdroite"
+        ]);
+        add([
+            rect(150, 20),
+            pos(145,-175),
+            color(255, 255, 255),
+            body({isStatic: true}),
+            area(),
+            rotate(0),
+            "murhaut"
+        ]);
+        add([
+            rect(250, 5),
+            pos(195,-65),
             color(255, 255, 255),
             body({isStatic: true}),
             area(),
@@ -2351,7 +3245,7 @@ const scenes = {
         ]);
         add([
             rect(150, 20),
-            pos(370,-80),
+            pos(350,-175),
             color(255, 255, 255),
             body({isStatic: true}),
             area(),
@@ -2360,7 +3254,7 @@ const scenes = {
         ]);
         add([
             rect(150, 20),
-            pos(240,-100),
+            pos(240,-195),
             color(0, 255, 255),
             body({isStatic: true}),
             area(),
@@ -2368,10 +3262,19 @@ const scenes = {
             "hitboxhaut"
         ]);
         add([sprite("ruins_3"), pos(0, -350), scale(2.01)])
-        const floweyow = add([sprite("torielwalk"), pos(295, 215), scale(2)])
+        const save = add([sprite("save_icon"), pos(300, 60), scale(2), area()], add([
+            rect(20, 10),
+            pos(310,60),
+            color(0, 255, 255),
+            opacity(0),
+            area(),
+            body({isStatic: true}),
+            rotate(0),
+            "hitsave"]))
+        save.play("shine")
         UIManager.playerManager(vec2(305,480))
         player.play("idleu")
-        const limitUp = -200
+        const limitUp = -60
         const limitDown = 373
         const limitLeft = 280
         const limitRight = 995
@@ -2394,19 +3297,6 @@ const scenes = {
             playerY = player.pos.y +110
             }
         })
-        let speaking = play("torielspeak", {
-            volume: 1,
-            paused: true,
-            loop:true
-        })
-        onUpdate(() => {
-            if (window.textIsWriting == true) {
-                speaking.paused = false
-            }
-            else if(!window.textIsWriting){
-                speaking.paused = true
-            }
-        })
         let fightStarted = false
         
         player.onCollide('hitboxback', () => {
@@ -2424,6 +3314,7 @@ const scenes = {
                         wait(0.5, () => {
                             go("ruins_2", transition)
                         })
+                        
                     }
                 }
             ])
@@ -2447,6 +3338,234 @@ const scenes = {
                 }
             ])
         })
+        
+        const torielow = add([sprite("torielwalk"), pos(285, 295), scale(2), area()])
+        add([
+            rect(150, 20),
+            pos(240,65),
+            color(0, 255, 255),
+            opacity(0),
+            area(),
+            rotate(0),
+            "hit1"])
+        function torielLeave(){
+            tween(torielow.pos, vec2(290, 80), 1.4, (p) => torielow.pos = p, easings.linear)
+            torielow.play("up")
+            torielow.onCollide("hit1", () => {
+                tween(torielow.pos, vec2(490, -120), 1.6, (p) => torielow.pos = p, easings.linear)
+                wait(1.6, () => {
+                    tween(torielow.pos, vec2(490, -150), 0.3, (p) => torielow.pos = p, easings.linear)
+                    wait(0.3, () => {
+                        torielow.play("left")
+                        tween(torielow.pos, vec2(460, -170), 0.3, (p) => torielow.pos = p, easings.linear)
+                        wait(0.3, () => {
+                            torielow.play("idled")
+                        })
+                    })
+                })
+            })
+        }
+        
+        let speaking = play("generic2", {
+            volume: 1,
+            paused: true,
+            loop:true
+        })
+        onUpdate(() => {
+            if (window.textIsWriting == true) {
+                speaking.paused = false
+            }
+            else if(!window.textIsWriting){
+                speaking.paused = true
+            }
+        })
+        torielLeave()
+        window.isInDialog = false
+        function setupInitialEventListeners() {
+            onKeyPress("z", () => {
+                if (!interacted && !window.isInDialog) {
+                    interact();
+                }
+            });
+        
+            onKeyPress("enter", () => {
+                if (!interacted && !window.isInDialog) {
+                    interact();
+                }
+            });
+        }
+        onKeyPress("enter", interact)
+        let interacted = false;
+        function displaySave(){
+            window.savedName = ""
+            fetch('/api/getSaveName')
+            .then(response => response.json())
+            .then(data => {
+                const saveName = String(data.data); // Convertit la chaîne en entier
+                if (saveName !== "000") { 
+                    savedName = saveName;
+                    console.log("Une sauvegarde existe");
+                    const contour = add([
+                        rect(350 + 5*2, 155 + 5*2),
+                        pos(142 - 5, 140 - 5),
+                        color(255, 255, 255),
+                        area(),
+                        fixed(),
+                        "previousave"
+                    ]);
+                    const interieur = add([
+                        rect(350, 155),
+                        pos(142, 140),
+                        color(0, 0, 0),
+                        fixed(),
+                        , "previousave"
+                    ]);
+                    
+                } else if(saveName =="000") {
+                    console.log("Aucune sauvegarde trouvée");
+                    const contour = add([
+                        rect(350 + 5*2, 155 + 5*2),
+                        pos(142 - 5, 140 - 5),
+                        color(255, 255, 255),
+                        area(),
+                        fixed(),
+                        "previousave"
+                    ]);
+                    const interieur = add([
+                        rect(350, 155),
+                        pos(142, 140),
+                        color(0, 0, 0),
+                        fixed(), "previousave"
+                    ]);
+                    add([text("EMPTY\n__",{
+                        size:25,
+                        font:"detersans",
+                    } ),pos(165,160), color(255,255,255), fixed(), "previousave"])
+                    add([text("LV 0",{
+                        size:25,
+                        font:"detersans",
+                    } ),pos(305,160), color(255,255,255), fixed(), "previousave"])
+                    add([text("0:00",{
+                        size:25,
+                        font:"detersans",
+                    } ),pos(405,160), color(255,255,255), fixed(), "previousave"])
+                }
+                else {
+                    console.log("La valeur n'est pas un nombre valide.");
+                }
+                class UI {
+                    constructor() {
+                        this.buttons = [
+                            { id: "Save",  pos: [190, 250], color:rgb(255, 255, 255), isSelected: true, isPressed: false },
+                            { id: "Return", pos: [340, 250], color:rgb(255, 255, 255),isSelected: false, isPressed: false },
+                        ];
+                        this.heartPos = [160, 253]
+                    }
+                    init() {
+                        this.buttons.forEach(btn => {
+                            const position = vec2(btn.pos[0], btn.pos[1]);
+                            btn.entity = add([
+                                text(btn.id, {
+                                    font : "detersans",
+                                    size : 25
+                                }),
+                                pos(position),
+                                color(255,255,255),
+                                fixed(),
+                                "saveUI"
+                            ]);
+                        });
+                        const heartPosition = vec2(this.heartPos[0], this.heartPos[1]);
+                        this.heart = add([sprite("heart"), pos(heartPosition), fixed(), "saveUI"])
+                        this.setupInputHandlers();
+                    }
+                    setupInputHandlers() {
+                        onKeyPress("right", () => {
+                            if(isInSaveMenu == true){
+                            this.moveCursor("right");}
+                        });
+                        onKeyPress("left", () => {
+                            if(isInSaveMenu == true){
+                            this.moveCursor("left");}
+                            
+                        });
+                        onKeyPress("z", () => {
+                            this.activateButton(); 
+                        });
+                    }
+                    moveCursor(direction) {
+                        let currentIndex = this.buttons.findIndex(btn => btn.isSelected);
+                        let newIndex = currentIndex;
+                
+                        if (direction === "right") {
+                            newIndex = (currentIndex + 1) % this.buttons.length;
+                        } else if (direction === "left") {
+                            newIndex = (currentIndex - 1 + this.buttons.length) % this.buttons.length;
+                        }
+                        this.buttons[currentIndex].isSelected = false;
+                        this.buttons[newIndex].isSelected = true;
+                        play("uimove")
+                        this.updateButtons();
+                    }
+                    updateButtons() {
+                        this.buttons.forEach((btn, index) => {
+                            const isSelected = btn.isSelected;
+                            if (isSelected) {
+                                const offsetX = -29; // Définition de l'offset
+                                this.heart.use(pos(vec2(btn.pos[0] + offsetX, this.heartPos[1])));
+                            }
+                        });
+                    }
+                    activateButton() {
+                        const selectedButton = this.buttons.find(btn => btn.isSelected);
+                        console.log(`${selectedButton.id} button activated`);
+                        let status = selectedButton.id;
+                        if(status== "Save"){
+
+                        }
+                        else if(status == "Return"){
+                            wait(0.1, () => {
+                            this.goBack()})
+                        }
+                    }
+                    goBack(){
+                        destroyAll("previousave")
+                        destroyAll("saveUI")
+                        window.isInDialog=false
+                        window.isInSaveMenu = false
+                        interacted = false;
+                        this.makeFalse()
+                    }
+                    makeFalse(){
+                        interacted = false
+                    }
+                    
+            }
+            const ui = new UI(); 
+            ui.init();
+                add([text(savedName,{
+                    size:25,
+                    font:"detersans",
+                } ),pos(160,80), color(255,255,255), fixed()])
+            })
+            window.isInDialog=true
+            window.isInSaveMenu = true
+        }
+        
+        function interact() {
+            if (!interacted) {
+                for (const col of player.getCollisions()) {
+                    const c = col.target;
+                    if (c.is("hitsave")) {
+                        interacted = true;
+                        UIManager.displayDialogOW("* (The shadows of the ruins/b looms above, filling you with/b determination.)|* (HP fully restored.)", "down", false, "", "idle", "talk", displaySave);
+                        interacted = false
+                        return; 
+                    }
+                }
+            }
+        }
+        setupInitialEventListeners()
     },
 
     snowdin: () => {
@@ -2595,4 +3714,4 @@ for (const key in scenes) {
     scene(key, scenes[key])
 }
 
-go("ruins_1")
+go("ruins_3")

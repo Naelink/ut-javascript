@@ -55,3 +55,28 @@ app.post('/api/updateTempPlotValue', (req, res) => {
       res.send('Valeur mise à jour avec succès.');
     });
   });
+  app.post('/api/createName', (req, res) => {
+    const newValue = req.body.newValue;
+    const query = 'UPDATE tempsave SET data = ? WHERE id = 1';
+    db.query(query, [newValue], (err, result) => {
+      if (err) throw err;
+      res.send('Valeur mise à jour avec succès.');
+    });
+  });
+  app.get('/api/getSaveName', (req, res) => {
+    const query = 'SELECT `data` FROM `save` WHERE `id` = 1'; 
+    db.query(query, (err, results) => {
+      if (err) {
+        console.error(err); // Log de l'erreur pour le débogage
+        res.status(500).send('Erreur lors de la récupération des données');
+      } else {
+        // Vérifie si des résultats ont été trouvés ET si le premier résultat a une propriété `data` qui n'est pas NULL
+        if (results.length > 0 && results[0].data != null) {
+          res.json(results[0]); // Renvoie la valeur directement depuis la base de données
+        } else {
+          // Si aucun résultat ou si la `data` est NULL, renvoie "000"
+          res.json({data: "000"});
+        }
+      }
+    });
+});

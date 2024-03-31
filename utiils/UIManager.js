@@ -55,7 +55,6 @@ class UI {
         });
     }
     deselectButton() {
-        // Désélectionne le bouton actuellement sélectionné
         destroy(currentTextDisplay)
         const positionTexte = vec2(60,275);
         this.buttons.forEach(btn => {
@@ -90,7 +89,6 @@ class UI {
             const isSelected = btn.isSelected;
             btn.entity.use(sprite(isSelected ? btn.spriteSelected : btn.sprite));
             if (isSelected) {
-                // Ajoutez un offset de 5 pixels vers la droite à la position x du cœur
                 const offsetX = 9; // Définition de l'offset
                 this.heart.use(pos(vec2(btn.pos[0] + offsetX, this.heartPos[1])));
             }
@@ -317,17 +315,23 @@ class UI {
         let currentSegmentIndex = 0;
     
         const cleanup = () => {
-            destroy(window.dialSprite);
-            destroy(window.currentTextDisplay);
+            if (window.dialSprite) {
+                destroy(window.dialSprite);
+            }
+            if (window.currentTextDisplay) {
+                destroy(window.currentTextDisplay);
+            }
             destroy(box);
             window.isInDialog = false;
             window.nextEvent =+ 1
             if(typeof onComplete === 'function'){
                 onComplete()
             }
+            return;
         };
     
         const afficherSegment = () => {
+            window.isInDialog = true
             if (window.currentTextDisplay) {
                 destroy(window.currentTextDisplay); // Clear the previous text display if it exists
             }
@@ -467,6 +471,56 @@ class UI {
                 dialSprite.play(animidle)
             }
         });
+    
+        processNext(); // Start processing
+        return objetTexte;
+    }
+    animerTexteIntro(texteComplet, positionTexte) {
+        let texteActuel = ""; // Texte actuellement affiché
+        window.textIsWriting = true; // Indique que le texte commence à s'afficher
+    
+        // Créer un objet de texte initial vide
+        const objetTexte = add([
+            text("", { size: 25, font: "deter", width: 450, lineSpacing: 10, letterSpacing:3 }),
+            pos(positionTexte),
+            color(255, 255, 255),
+            fixed()
+        ]);
+    
+        const commands = texteComplet.split(/(\/b|\/p)/); // Split the text on /b and /p commands
+        let commandIndex = 0; // Current command index
+    
+        const processNext = () => {
+            if (commandIndex < commands.length) {
+                if (commands[commandIndex] === "/b") {
+                    // Handle line break
+                    texteActuel += "\n";
+                    commandIndex++;
+                    processNext();
+                } else if (commands[commandIndex] === "/p") {
+                    // Handle pause
+                    wait(0.5, () => {
+                        commandIndex++;
+                        processNext();
+                    });
+                } else {
+                    // Handle text
+                    const processText = (text, index) => {
+                        if (index < text.length) {
+                            texteActuel += text[index];
+                            objetTexte.text = texteActuel;
+                            wait(0.065, () => processText(text, index + 1));
+                        } else {
+                            commandIndex++;
+                            processNext();
+                        }
+                    };
+                    processText(commands[commandIndex], 0);
+                }
+            } else {
+                window.textIsWriting = false; // No more commands to process
+            }
+        };
     
         processNext(); // Start processing
         return objetTexte;
