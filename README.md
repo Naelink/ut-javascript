@@ -38,6 +38,9 @@ Etant un jeu scénarisé, les évênements et éléments scénaristiques tels qu
 De nombreux choix et chemins différents sont donnés au joueur pour chaque intéraction. Que ce soit des choix évidents, tels que choisir oui ou non sur une interface, ou bien simplement la façon d'agir, il est important de modifier le cours du jeu selon les choix du joueur. Ainsi, la table "Flags" garde en mémoire les choix du joueur, selon des déclencheurs positionnés dans le code du jeu. De plus, Undertale est un jeu qui retient des informations au délà de la sauvegarde du joueur. Ainsi, si un joueur tue un certain personnage, puis revient à une sauvegarde plus ancienne afin de ne pas tuer ce même personnage, le jeu s'en souviendra. Et le jeu prendra un malin plaisir à le faire savoir.
 Un exemple d'un choix inconscient a déjà été implémenté dans le jeu, lors du tutoriel avec Flowey. En effet, le joueur peut décider d'écouter Flowey et de tomber dans son piège, ou bien de ne pas lui faire confiance et ainsi éviter ses attaques. Le jeu se comportera ainsi différemment selon ce choix.
 
+### 3.6 Gestion des sons et musiques :
+Undertale brille par ses musiques et son sound design, il était donc plus qu'important de gérer correctement les musiques et effets sonores, ainsi que leur début, leur fin, leur volume et leurs pauses, selon les évênements en cours.
+
 ### 3.6 Gestion des dialogues:
 Plusieurs types de dialogues (en combat, dans l'overworld, affiché en haut, affiché en bas, affiché avec sprite, sans sprite, etc) existent, et avancent dans leur texte sur l'appui d'un bouton. Lorsque le texte apparait, le personnage parle ; ainsi, sa sprite s'anime, et on entend sa voix. De plus, le texte, l'animation, et la voix, doivent faire une pause lorsque le personnage atteint une virgule, afin de rendre le dialogue plus immersif et de donner une vraie impression de parole.
 
@@ -49,8 +52,8 @@ Plusieurs types de dialogues (en combat, dans l'overworld, affiché en haut, aff
 
 # Installation : 
 
-1. installer Node.js
-2. installer la base de données et l'héberger en local
-3. changer les identifiants de connexion à la bdd dans server.js
-4. executer la commande suivante à la racine du projet : node server.js
-5. se rendre à l'adresse localhost:3000 sur navigateur
+1. Installer Node.js
+2. Installer la base de données (undertale.sql) et l'héberger en local
+3. Changer les identifiants de connexion à la bdd dans server.js
+4. Executer la commande suivante à la racine du projet : node server.js
+5. Se rendre à l'adresse localhost:3000 sur navigateur

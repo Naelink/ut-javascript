@@ -40,17 +40,17 @@ class UI {
         });
         onKeyPress("z", () => {
             if(this.status !="attackBar"){
-                this.activateButton(); // Désélectionne le bouton lorsque "x" est pressé
+                this.activateButton(); 
             }
         });
         onKeyPress("enter", () => {
             if(this.status !="attackBar"){
-                this.activateButton(); // Désélectionne le bouton lorsque "x" est pressé
+                this.activateButton(); 
             }
         });
         onKeyPress("x", () => {
             if(this.status != "start" && this.status !="attackBar"){
-                this.deselectButton(); // Désélectionne le bouton lorsque "x" est pressé
+                this.deselectButton(); 
             }
         });
     }
@@ -60,7 +60,7 @@ class UI {
         this.buttons.forEach(btn => {
             if(btn.isPressed == true){
             btn.isSelected = false;
-            btn.entity.use(sprite(btn.sprite)); // Utilise le sprite non sélectionné
+            btn.entity.use(sprite(btn.sprite)); 
             }
         });
         this.status = "start"; // Réinitialise le statut
@@ -89,7 +89,7 @@ class UI {
             const isSelected = btn.isSelected;
             btn.entity.use(sprite(isSelected ? btn.spriteSelected : btn.sprite));
             if (isSelected) {
-                const offsetX = 9; // Définition de l'offset
+                const offsetX = 9; 
                 this.heart.use(pos(vec2(btn.pos[0] + offsetX, this.heartPos[1])));
             }
         });
@@ -153,7 +153,7 @@ class UI {
         const atk_cursor = add([sprite("attackcursor"), pos(48, 257), scale(0.97)]);
     
         window.score = 0;
-        let increasing = true; // Indicates whether the score is currently increasing
+        let increasing = true; 
     
         const scoredis = add([
             text(window.score.toString(), {
@@ -242,7 +242,7 @@ class UI {
         }); })
     
         const finishAttack = () => {
-            this.status = "start"; // Correctly set 'this.status' without needing to bind 'this'
+            this.status = "start";
             console.log("Attack finished, status reset to start.");
         };
     }
@@ -351,12 +351,10 @@ class UI {
             }
         };
     
-        // Listener to move to the next segment when 'Z' is pressed
         onKeyPress("z", () => {
             if(window.textIsWriting == false){
                 afficherSegment()
             }})
-        // Display the first segment initially
         afficherSegment();
     }
     
@@ -372,8 +370,8 @@ class UI {
             fixed()
         ]);
     
-        const commands = texteComplet.split(/(\/b|\/p)/); // Split the text on /b and /p commands
-        let commandIndex = 0; // Current command index
+        const commands = texteComplet.split(/(\/b|\/p)/); 
+        let commandIndex = 0; 
     
         const processNext = () => {
             if (commandIndex < commands.length) {
@@ -411,10 +409,9 @@ class UI {
         return objetTexte;
     }
     animerTexteSprite(texteComplet, positionTexte, Sprite, animidle, anim2) {
-        let texteActuel = ""; // Texte actuellement affiché
-        window.textIsWriting = true; // Indique que le texte commence à s'afficher
+        let texteActuel = ""; 
+        window.textIsWriting = true; 
     
-        // Créer un objet de texte initial vide
         const objetTexte = add([
             text("", { size: 24, font: "deter", width: 410, lineSpacing: 8 }),
             pos(positionTexte.add(vec2(100,0))),
@@ -422,8 +419,8 @@ class UI {
             fixed()
         ]);
     
-        const commands = texteComplet.split(/(\/b|\/p)/); // Split the text on /b and /p commands
-        let commandIndex = 0; // Current command index
+        const commands = texteComplet.split(/(\/b|\/p)/); 
+        let commandIndex = 0; 
     
         const processNext = () => {
             if (commandIndex < commands.length) {
@@ -715,7 +712,6 @@ class UI {
     displayCombatMenu(enemyName) {
         this.enemyName = enemyName;
         console.log(`Displaying combat menu for ${this.enemyName}`);
-        // Additional setup if needed
     }
     
     
@@ -723,9 +719,9 @@ class UI {
         destroyAll("HPdisplay")
         for (let i = 0; i < nombre; i++) {
             add([
-                rect(1.2, 20), // Crée une barre de largeur 1 et hauteur 20
-                pos(positionInitiale.x + i * 1.2, positionInitiale.y), // Positionne chaque barre à la suite de l'autre
-                color(255, 255, 0), // Définit la couleur de la barre en jaune (RGB)
+                rect(1.2, 20), 
+                pos(positionInitiale.x + i * 1.2, positionInitiale.y), 
+                color(255, 255, 0), 
                 "HPdisplay"
             ]);
         }
@@ -734,9 +730,9 @@ class UI {
         destroyAll("HPMaxdisplay")
         for (let i = 0; i < nombre; i++) {
             add([
-                rect(1.2, 20), // Crée une barre de largeur 1 et hauteur 20
-                pos(positionInitiale.x + i * 1.2, positionInitiale.y), // Positionne chaque barre à la suite de l'autre
-                color(255, 0, 0), // Définit la couleur de la barre en jaune (RGB)
+                rect(1.2, 20),
+                pos(positionInitiale.x + i * 1.2, positionInitiale.y), 
+                color(255, 0, 0),
                 "HPMaxdisplay"
             ]);
         }
