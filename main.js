@@ -11,6 +11,7 @@ kaboom(
 load.fonts()
 load.assets()
 import { UIManager } from "./utiils/UIManager.js"
+import { dbFunctions } from "./utiils/dbFunctions.js"
 
 let playerName="Nael"
 let playerLV = 1
@@ -736,7 +737,7 @@ const scenes = {
                     this.moveCursor("left");}}
                 });
                 onKeyPress("z", () => {
-                    if (this.status!="lauchedGame"){
+                    if (this.status!="launchedGame"){
                     if (this.status=="No"){
                     go("name_choose");}
                     else {
@@ -764,7 +765,7 @@ const scenes = {
                     }}
                 });
                 onKeyPress("enter", () => {
-                    if (this.status!="lauchedGame"){
+                    if (this.status!="launchedGame"){
                     if (this.status=="No"){
                     go("name_choose");}
                     else {
@@ -3381,6 +3382,7 @@ const scenes = {
         })
         torielLeave()
         window.isInDialog = false
+        let interacted = false;
         function setupInitialEventListeners() {
             onKeyPress("z", () => {
                 if (!interacted && !window.isInDialog) {
@@ -3395,7 +3397,6 @@ const scenes = {
             });
         }
         onKeyPress("enter", interact)
-        let interacted = false;
         function displaySave(){
             window.savedName = ""
             fetch('/api/getSaveName')
@@ -3411,15 +3412,32 @@ const scenes = {
                         color(255, 255, 255),
                         area(),
                         fixed(),
-                        "previousave"
+                        "previousavebox"
                     ]);
                     const interieur = add([
                         rect(350, 155),
                         pos(142, 140),
                         color(0, 0, 0),
                         fixed(),
-                        , "previousave"
+                        , "previousavebox"
                     ]);
+                    let playerData = { charName: '', lv: '', currentRoom: '' };
+                    dbFunctions.getSaveInfo(playerData);
+                    wait(0.1, () => {
+                    add([text(playerData.charName+"\n"+playerData.currentRoom,{
+                            size:25,
+                            font:"detersans",
+                            lineSpacing : 12
+                    } ),pos(165,160), color(255,255,255), fixed(), "previousave"])
+                    add([text("LV "+playerData.lv,{
+                            size:25,
+                            font:"detersans",
+                    } ),pos(305,160), color(255,255,255), fixed(), "previousave"])
+                    add([text("0:00",{
+                            size:25,
+                            font:"detersans",
+                    } ),pos(405,160), color(255,255,255), fixed(), "previousave"])
+                })
                     
                 } else if(saveName =="000") {
                     console.log("Aucune sauvegarde trouvée");
@@ -3429,13 +3447,13 @@ const scenes = {
                         color(255, 255, 255),
                         area(),
                         fixed(),
-                        "previousave"
+                        "previousavebox"
                     ]);
                     const interieur = add([
                         rect(350, 155),
                         pos(142, 140),
                         color(0, 0, 0),
-                        fixed(), "previousave"
+                        fixed(), "previousavebox"
                     ]);
                     add([text("EMPTY\n__",{
                         size:25,
@@ -3521,7 +3539,41 @@ const scenes = {
                         console.log(`${selectedButton.id} button activated`);
                         let status = selectedButton.id;
                         if(status== "Save"){
-
+                            dbFunctions.writeSave()
+                            wait(0.1, () => {
+                                let playerData = { charName: '', lv: '', currentRoom: '' };
+                                dbFunctions.getSaveInfo(playerData);
+                                wait(0.1, () => {
+                                destroyAll("previousave")
+                                destroyAll("saveUI")
+                                add([text(playerData.charName+"\n"+playerData.currentRoom,{
+                                    size:25,
+                                    font:"detersans",
+                                    lineSpacing : 12
+                                } ),pos(165,160), color(255,255,0), fixed(), "newsave"])
+                                add([text("LV "+playerData.lv,{
+                                    size:25,
+                                    font:"detersans",
+                                } ),pos(305,160), color(255,255,0), fixed(), "newsave"])
+                                add([text("0:00",{
+                                    size:25,
+                                    font:"detersans",
+                                } ),pos(405,160), color(255,255,0), fixed(), "newsave"])
+                                add([text("File saved.",{
+                                    size:25,
+                                    font:"detersans",
+                                } ),pos(190, 250), color(255,255,0), fixed(), "newsave"])})
+                                onKeyPress("z", () => {
+                                    status = "Saved"
+                                    wait(0.1, () => {
+                                    this.goBack();})
+                                })
+                                onKeyPress("enter", () => {
+                                    status = "Saved"
+                                    wait(0.1, () => {
+                                        this.goBack();})
+                                });
+                            })
                         }
                         else if(status == "Return"){
                             wait(0.1, () => {
@@ -3530,23 +3582,545 @@ const scenes = {
                     }
                     goBack(){
                         destroyAll("previousave")
+                        destroyAll("previousavebox")
                         destroyAll("saveUI")
+                        destroyAll("newsave")
                         window.isInDialog=false
                         window.isInSaveMenu = false
                         interacted = false;
                         this.makeFalse()
+                        go("ruins_3_saved", player.pos.x, player.pos.y)
                     }
                     makeFalse(){
                         interacted = false
+                        window.isInDialog=false
+
                     }
                     
             }
             const ui = new UI(); 
             ui.init();
-                add([text(savedName,{
-                    size:25,
-                    font:"detersans",
-                } ),pos(160,80), color(255,255,255), fixed()])
+            })
+            window.isInDialog=true
+            window.isInSaveMenu = true
+        }
+        
+        function interact() {
+            if (!interacted) {
+                for (const col of player.getCollisions()) {
+                    const c = col.target;
+                    if (c.is("hitsave")) {
+                        interacted = true;
+                        UIManager.displayDialogOW("* (The shadows of the ruins/b looms above, filling you with/b determination.)|* (HP fully restored.)", "down", false, "", "idle", "talk", displaySave);
+                        interacted = false
+                        return; 
+                    }
+                }
+            }
+        }
+        setupInitialEventListeners()
+    },
+    ruins_3_saved: (posx,posy) => {
+        add([
+            rect(150, 20),
+            pos(105,470),
+            color(255, 255, 255),
+            body({isStatic: true}),
+            area(),
+            rotate(10),
+            "murdiagonalbas"
+        ]);
+        add([
+            rect(150, 20),
+            pos(265,510),
+            color(255, 255, 255),
+            body({isStatic: true}),
+            area(),
+            rotate(90),
+            "murdiagonalbas"
+        ]);
+        add([
+            rect(150, 20),
+            pos(385,510),
+            color(255, 255, 255),
+            body({isStatic: true}),
+            area(),
+            rotate(90),
+            "murdiagonalbas"
+        ]);
+        add([
+            rect(150, 20),
+            pos(400,520),
+            color(255, 255, 255),
+            body({isStatic: true}),
+            area(),
+            rotate(-30),
+            "murdiagonalbas"
+        ]);
+        add([
+            rect(350, 20),
+            pos(520,100),
+            color(255, 255, 255),
+            body({isStatic: true}),
+            area(),
+            rotate(90),
+            "murgauche"
+        ]);
+        add([
+            rect(550, 20),
+            pos(120,100),
+            color(255, 255, 255),
+            body({isStatic: true}),
+            area(),
+            rotate(90),
+            "murdroite"
+        ]);
+        add([
+            rect(150, 20),
+            pos(50,-120),
+            color(255, 255, 255),
+            body({isStatic: true}),
+            area(),
+            rotate(-30),
+            "murdiagonalhaut"
+        ]);
+        add([
+            rect(150, 20),
+            pos(450,-210),
+            color(255, 255, 255),
+            body({isStatic: true}),
+            area(),
+            rotate(30),
+            "murdiagonalhaut"
+        ]);
+        add([
+            rect(120, 20),
+            pos(50,0),
+            color(255, 255, 255),
+            body({isStatic: true}),
+            area(),
+            rotate(45),
+            "murdiagonalhaut"
+        ]);
+        add([
+            rect(100, 20),
+            pos(490,80),
+            color(255, 255, 255),
+            body({isStatic: true}),
+            area(),
+            rotate(-45),
+            "murdiagonalhaut"
+        ]);
+        add([
+            rect(70, 10),
+            pos(190,-50),
+            color(255, 255, 255),
+            body({isStatic: true}),
+            area(),
+            rotate(45),
+            "murdiagonalhaut"
+        ]);
+        add([
+            rect(70, 10),
+            pos(410, -10),
+            color(255, 255, 255),
+            body({isStatic: true}),
+            area(),
+            rotate(-45),
+            "murdiagonalhaut"
+        ]);
+        add([
+            rect(150, 20),
+            pos(75,-100),
+            color(255, 255, 255),
+            body({isStatic: true}),
+            area(),
+            rotate(90),
+            "murgauche"
+        ]);
+        add([
+            rect(150, 20),
+            pos(575,-100),
+            color(255, 255, 255),
+            body({isStatic: true}),
+            area(),
+            rotate(90),
+            "murdroite"
+        ]);
+        add([
+            rect(150, 20),
+            pos(145,-175),
+            color(255, 255, 255),
+            body({isStatic: true}),
+            area(),
+            rotate(0),
+            "murhaut"
+        ]);
+        add([
+            rect(250, 5),
+            pos(195,-65),
+            color(255, 255, 255),
+            body({isStatic: true}),
+            area(),
+            rotate(0),
+            "murhaut"
+        ]);
+        add([
+            rect(150, 20),
+            pos(350,-175),
+            color(255, 255, 255),
+            body({isStatic: true}),
+            area(),
+            rotate(0),
+            "murhaut"
+        ]);
+        add([
+            rect(150, 20),
+            pos(240,-195),
+            color(0, 255, 255),
+            body({isStatic: true}),
+            area(),
+            rotate(0),
+            "hitboxhaut"
+        ]);
+        add([sprite("ruins_3"), pos(0, -350), scale(2.01)])
+        const save = add([sprite("save_icon"), pos(300, 60), scale(2), area()], add([
+            rect(20, 10),
+            pos(310,60),
+            color(0, 255, 255),
+            opacity(0),
+            area(),
+            body({isStatic: true}),
+            rotate(0),
+            "hitsave"]))
+        save.play("shine")
+        UIManager.playerManager(vec2(posx,posy))
+        player.play("idleu")
+        const limitUp = -60
+        const limitDown = 373
+        const limitLeft = 280
+        const limitRight = 995
+        const playerX = 305
+        let playerY = player.pos.y
+        const hitboxback = add([
+            rect(300, 20), // htbox porte
+            pos(175,550),
+            color(0, 0, 0, 0),
+            body({isStatic: true}),
+            area(),
+            opacity(0),
+            "hitboxback",
+        ]);
+        window.player.onUpdate(() => {
+            camPos(playerX+16, playerY-110)
+        })
+        window.player.onUpdate(() => {
+            if(player.pos.y > limitUp && player.pos.y < limitDown){
+            playerY = player.pos.y +110
+            }
+        })
+        let fightStarted = false
+        
+        player.onCollide('hitboxback', () => {
+            window.currentRoom = "ruins_3"
+            const transition = add([
+                rect(width(), height()),
+                color(0,0,0),
+                opacity(1),
+                stay(),
+                fixed(),
+                z(100),
+                {
+                    add() {
+                        tween(0, 1, 0.5, (t) => transition.opacity = t, easings.easeOutQuad)
+                        wait(0.5, () => {
+                            go("ruins_2", transition)
+                        })
+                        
+                    }
+                }
+            ])
+        })
+        player.onCollide('hitboxhaut', () => {
+            window.currentRoom = "ruins_2"
+            const transition = add([
+                rect(width(), height()),
+                color(0,0,0),
+                opacity(1),
+                stay(),
+                fixed(),
+                z(100),
+                {
+                    add() {
+                        tween(0, 1, 0.5, (t) => transition.opacity = t, easings.easeOutQuad)
+                        wait(0.5, () => {
+                            go("ruins_3", transition)
+                        })
+                    }
+                }
+            ])
+        })
+        
+        const torielow = add([sprite("torielwalk"), pos(285, 295), scale(2), area()])
+        add([
+            rect(150, 20),
+            pos(240,65),
+            color(0, 255, 255),
+            opacity(0),
+            area(),
+            rotate(0),
+            "hit1"])
+        function torielLeave(){
+            tween(torielow.pos, vec2(290, 80), 1.4, (p) => torielow.pos = p, easings.linear)
+            torielow.play("up")
+            torielow.onCollide("hit1", () => {
+                tween(torielow.pos, vec2(490, -120), 1.6, (p) => torielow.pos = p, easings.linear)
+                wait(1.6, () => {
+                    tween(torielow.pos, vec2(490, -150), 0.3, (p) => torielow.pos = p, easings.linear)
+                    wait(0.3, () => {
+                        torielow.play("left")
+                        tween(torielow.pos, vec2(460, -170), 0.3, (p) => torielow.pos = p, easings.linear)
+                        wait(0.3, () => {
+                            torielow.play("idled")
+                        })
+                    })
+                })
+            })
+        }
+        
+        let speaking = play("generic2", {
+            volume: 1,
+            paused: true,
+            loop:true
+        })
+        onUpdate(() => {
+            if (window.textIsWriting == true) {
+                speaking.paused = false
+            }
+            else if(!window.textIsWriting){
+                speaking.paused = true
+            }
+        })
+        torielLeave()
+        window.isInDialog = false
+        let interacted = false;
+        function setupInitialEventListeners() {
+            onKeyPress("z", () => {
+                if (!interacted && !window.isInDialog) {
+                    interact();
+                }
+            });
+        
+            onKeyPress("enter", () => {
+                if (!interacted && !window.isInDialog) {
+                    interact();
+                }
+            });
+        }
+        onKeyPress("enter", interact)
+        function displaySave(){
+            window.savedName = ""
+            fetch('/api/getSaveName')
+            .then(response => response.json())
+            .then(data => {
+                const saveName = String(data.data); // Convertit la chaîne en entier
+                if (saveName !== "000") { 
+                    savedName = saveName;
+                    console.log("Une sauvegarde existe");
+                    const contour = add([
+                        rect(350 + 5*2, 155 + 5*2),
+                        pos(142 - 5, 140 - 5),
+                        color(255, 255, 255),
+                        area(),
+                        fixed(),
+                        "previousavebox"
+                    ]);
+                    const interieur = add([
+                        rect(350, 155),
+                        pos(142, 140),
+                        color(0, 0, 0),
+                        fixed(),
+                        , "previousavebox"
+                    ]);
+                    let playerData = { charName: '', lv: '', currentRoom: '' };
+                    dbFunctions.getSaveInfo(playerData);
+                    wait(0.1, () => {
+                    add([text(playerData.charName+"\n"+playerData.currentRoom,{
+                            size:25,
+                            font:"detersans",
+                            lineSpacing : 12
+                    } ),pos(165,160), color(255,255,255), fixed(), "previousave"])
+                    add([text("LV "+playerData.lv,{
+                            size:25,
+                            font:"detersans",
+                    } ),pos(305,160), color(255,255,255), fixed(), "previousave"])
+                    add([text("0:00",{
+                            size:25,
+                            font:"detersans",
+                    } ),pos(405,160), color(255,255,255), fixed(), "previousave"])
+                })
+                    
+                } else if(saveName =="000") {
+                    console.log("Aucune sauvegarde trouvée");
+                    const contour = add([
+                        rect(350 + 5*2, 155 + 5*2),
+                        pos(142 - 5, 140 - 5),
+                        color(255, 255, 255),
+                        area(),
+                        fixed(),
+                        "previousavebox"
+                    ]);
+                    const interieur = add([
+                        rect(350, 155),
+                        pos(142, 140),
+                        color(0, 0, 0),
+                        fixed(), "previousavebox"
+                    ]);
+                    add([text("EMPTY\n__",{
+                        size:25,
+                        font:"detersans",
+                    } ),pos(165,160), color(255,255,255), fixed(), "previousave"])
+                    add([text("LV 0",{
+                        size:25,
+                        font:"detersans",
+                    } ),pos(305,160), color(255,255,255), fixed(), "previousave"])
+                    add([text("0:00",{
+                        size:25,
+                        font:"detersans",
+                    } ),pos(405,160), color(255,255,255), fixed(), "previousave"])
+                }
+                else {
+                    console.log("La valeur n'est pas un nombre valide.");
+                }
+                class UI {
+                    constructor() {
+                        this.buttons = [
+                            { id: "Save",  pos: [190, 250], color:rgb(255, 255, 255), isSelected: true, isPressed: false },
+                            { id: "Return", pos: [340, 250], color:rgb(255, 255, 255),isSelected: false, isPressed: false },
+                        ];
+                        this.heartPos = [160, 253]
+                    }
+                    init() {
+                        this.buttons.forEach(btn => {
+                            const position = vec2(btn.pos[0], btn.pos[1]);
+                            btn.entity = add([
+                                text(btn.id, {
+                                    font : "detersans",
+                                    size : 25
+                                }),
+                                pos(position),
+                                color(255,255,255),
+                                fixed(),
+                                "saveUI"
+                            ]);
+                        });
+                        const heartPosition = vec2(this.heartPos[0], this.heartPos[1]);
+                        this.heart = add([sprite("heart"), pos(heartPosition), fixed(), "saveUI"])
+                        this.setupInputHandlers();
+                    }
+                    setupInputHandlers() {
+                        onKeyPress("right", () => {
+                            if(isInSaveMenu == true){
+                            this.moveCursor("right");}
+                        });
+                        onKeyPress("left", () => {
+                            if(isInSaveMenu == true){
+                            this.moveCursor("left");}
+                            
+                        });
+                        onKeyPress("z", () => {
+                            this.activateButton(); 
+                        });
+                    }
+                    moveCursor(direction) {
+                        let currentIndex = this.buttons.findIndex(btn => btn.isSelected);
+                        let newIndex = currentIndex;
+                
+                        if (direction === "right") {
+                            newIndex = (currentIndex + 1) % this.buttons.length;
+                        } else if (direction === "left") {
+                            newIndex = (currentIndex - 1 + this.buttons.length) % this.buttons.length;
+                        }
+                        this.buttons[currentIndex].isSelected = false;
+                        this.buttons[newIndex].isSelected = true;
+                        play("uimove")
+                        this.updateButtons();
+                    }
+                    updateButtons() {
+                        this.buttons.forEach((btn, index) => {
+                            const isSelected = btn.isSelected;
+                            if (isSelected) {
+                                const offsetX = -29; // Définition de l'offset
+                                this.heart.use(pos(vec2(btn.pos[0] + offsetX, this.heartPos[1])));
+                            }
+                        });
+                    }
+                    activateButton() {
+                        const selectedButton = this.buttons.find(btn => btn.isSelected);
+                        console.log(`${selectedButton.id} button activated`);
+                        let status = selectedButton.id;
+                        if(status== "Save"){
+                            dbFunctions.writeSave()
+                            wait(0.1, () => {
+                                let playerData = { charName: '', lv: '', currentRoom: '' };
+                                dbFunctions.getSaveInfo(playerData);
+                                wait(0.1, () => {
+                                destroyAll("previousave")
+                                destroyAll("saveUI")
+                                add([text(playerData.charName+"\n"+playerData.currentRoom,{
+                                    size:25,
+                                    font:"detersans",
+                                    lineSpacing : 12
+                                } ),pos(165,160), color(255,255,0), fixed(), "newsave"])
+                                add([text("LV "+playerData.lv,{
+                                    size:25,
+                                    font:"detersans",
+                                } ),pos(305,160), color(255,255,0), fixed(), "newsave"])
+                                add([text("0:00",{
+                                    size:25,
+                                    font:"detersans",
+                                } ),pos(405,160), color(255,255,0), fixed(), "newsave"])
+                                add([text("File saved.",{
+                                    size:25,
+                                    font:"detersans",
+                                } ),pos(190, 250), color(255,255,0), fixed(), "newsave"])})
+                                onKeyPress("z", () => {
+                                    status = "Saved"
+                                    wait(0.1, () => {
+                                    this.goBack();})
+                                })
+                                onKeyPress("enter", () => {
+                                    status = "Saved"
+                                    wait(0.1, () => {
+                                        this.goBack();})
+                                });
+                            })
+                        }
+                        else if(status == "Return"){
+                            wait(0.1, () => {
+                            this.goBack()})
+                        }
+                    }
+                    goBack(){
+                        destroyAll("previousave")
+                        destroyAll("previousavebox")
+                        destroyAll("saveUI")
+                        destroyAll("newsave")
+                        window.isInDialog=false
+                        window.isInSaveMenu = false
+                        interacted = false;
+                        this.makeFalse()
+                        go("ruins_3_saved", player.pos.x, player.pos.y)
+                    }
+                    makeFalse(){
+                        interacted = false
+                        window.isInDialog=false
+
+                    }
+                    
+            }
+            const ui = new UI(); 
+            ui.init();
             })
             window.isInDialog=true
             window.isInSaveMenu = true
@@ -3714,4 +4288,4 @@ for (const key in scenes) {
     scene(key, scenes[key])
 }
 
-go("ruins_3")
+go("pressZ")

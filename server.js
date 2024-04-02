@@ -54,20 +54,20 @@ app.post('/api/updateTempPlotValue', (req, res) => {
       if (err) throw err;
       res.send('Valeur mise à jour avec succès.');
     });
-  });
-  app.post('/api/createName', (req, res) => {
+});
+app.post('/api/createName', (req, res) => {
     const newValue = req.body.newValue;
     const query = 'UPDATE tempsave SET data = ? WHERE id = 1';
     db.query(query, [newValue], (err, result) => {
       if (err) throw err;
       res.send('Valeur mise à jour avec succès.');
     });
-  });
-  app.get('/api/getSaveName', (req, res) => {
+});
+app.get('/api/getSaveName', (req, res) => {
     const query = 'SELECT `data` FROM `save` WHERE `id` = 1'; 
     db.query(query, (err, results) => {
       if (err) {
-        console.error(err); // Log de l'erreur pour le débogage
+        console.error(err);
         res.status(500).send('Erreur lors de la récupération des données');
       } else {
         // Vérifie si des résultats ont été trouvés ET si le premier résultat a une propriété `data` qui n'est pas NULL
@@ -78,5 +78,63 @@ app.post('/api/updateTempPlotValue', (req, res) => {
           res.json({data: "000"});
         }
       }
+    });
+});
+app.get('/api/overwriteData', (req, res) => {
+    // Supprimer les données existantes dans table2
+    db.query('DELETE FROM table2', (err, results) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).send('Erreur lors de la suppression des données existantes');
+        }
+        
+        // Insérer les nouvelles données depuis table1
+        db.query('INSERT INTO table2 SELECT * FROM table1', (err, results) => {
+            if (err) {
+                console.error(err);
+                return res.status(500).send('Erreur lors de l\'insertion des nouvelles données');
+            }
+            res.send('Données mises à jour avec succès');
+        });
+    });
+});
+app.get('/api/writeSave', (req, res) => {
+    // Supprimer les données existantes dans table2
+    db.query('DELETE FROM save', (err, results) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).send('Erreur lors de la suppression des données existantes');
+        }
+        
+        // Insérer les nouvelles données depuis table1
+        db.query('INSERT INTO save SELECT * FROM tempsave', (err, results) => {
+            if (err) {
+                console.error(err);
+                return res.status(500).send('Erreur lors de l\'insertion des nouvelles données');
+            }
+            res.send('Données mises à jour avec succès');
+        });
+    });
+});
+app.get('/api/getSaveInfo', (req, res) => {
+    const query = `
+        SELECT
+            (SELECT data FROM save WHERE name = 'charname') AS charname,
+            (SELECT data FROM save WHERE name = 'lv') AS lv,
+            (SELECT data FROM save WHERE name = 'currentroom') AS currentroom
+    `;
+
+    db.query(query, (err, results) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).send('Erreur lors de la récupération des données du joueur');
+        }
+
+        if (results.length > 0) {
+            const playerInfo = results[0];
+            res.json(playerInfo);
+        } else {
+            res.status(404).send('Informations du joueur non trouvées');
+        }
     });
 });
