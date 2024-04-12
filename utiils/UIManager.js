@@ -104,19 +104,6 @@ class UI {
         }
         this.status = selectedButton.id;
         let positionTexte = vec2(60,275);
-        const statusdis = add([
-            text(this.status, {
-                size: 34, 
-                font: "deter", 
-                width: 510, 
-                lineSpacing: 8
-            }),
-            pos(positionTexte.add(vec2(30,-60))), 
-            color(255, 255, 255)
-        ])
-        onUpdate(() => {
-            statusdis.use(text(this.status))
-        })
         switch (this.status) {
         case "fight":
             this.fightMenu(this.enemyName);

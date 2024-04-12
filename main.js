@@ -1,4 +1,4 @@
-import kaboom from "https://unpkg.com/kaboom@3000.0.1/dist/kaboom.mjs"
+import kaboom from './node_modules/kaboom/dist/kaboom.mjs'
 import { load } from "./utiils/loader.js"
 
 kaboom(
@@ -1519,7 +1519,7 @@ const scenes = {
         
     },
     2: () => {
-        add([sprite("blackbg")])
+        add([sprite("blackbg"), scale(2), pos(-200,-200)])
         add([sprite("papyrus"), scale(2),pos(250,40)])
         if(window.isBoss = true && window.hasAttacked == true){
             UIManager.displayBossHP(window.score)
@@ -1711,6 +1711,51 @@ const scenes = {
                 go("1")
             });
         });
+        function spawnPellets(){
+            window.pellet1 = add([sprite("pellets"), scale(1),pos(310,160), area(), "pellet"])
+            pellet1.play("spin")
+            tween(pellet1.pos, vec2(200, 110), 1, (p) => pellet1.pos = p, easings.linear)
+            window.pellet2 = add([sprite("pellets"), scale(1),pos(310,160), area(), "pellet"])
+            pellet2.play("spin")
+            tween(pellet2.pos, vec2(245, 65), 1, (p) => pellet2.pos = p, easings.linear)
+            window.pellet3 = add([sprite("pellets"), scale(1),pos(310,160), area(), "pellet"])
+            pellet3.play("spin")
+            tween(pellet3.pos, vec2(310, 45), 1, (p) => pellet3.pos = p, easings.linear)
+            window.pellet4 = add([sprite("pellets"), scale(1),pos(310,160), area(), "pellet"])
+            pellet4.play("spin")
+            tween(pellet4.pos, vec2(380, 65), 1, (p) => pellet4.pos = p, easings.linear)
+            window.pellet5 = add([sprite("pellets"), scale(1),pos(310,160), area(), "pellet"])
+            pellet5.play("spin")
+            tween(pellet5.pos, vec2(420, 110), 1, (p) => pellet5.pos = p, easings.linear)
+        }
+        function sendPellets(onComplete){
+            pellet1.use(move(heart.pos.angle(pellet1.pos), 100))
+            pellet2.use(move(heart.pos.angle(pellet2.pos), 100))
+            pellet3.use(move(heart.pos.angle(pellet3.pos), 100))
+            pellet4.use(move(heart.pos.angle(pellet4.pos), 100))
+            pellet5.use(move(heart.pos.angle(pellet5.pos), 100))
+            window.gotHitByFlowey = false
+            heart.onCollide('pellet', () => {
+                window.gotHitByFlowey = true
+                play("damagetaken")
+                shake(20)
+            })
+            const floweyDie = onUpdate(() => {
+                if (window.gotHitByFlowey == true) {
+                    destroyAll("pellet")
+                    playerHP = playerHP-5
+                    go("1")
+                }
+            })
+        }
+        wait(1, () => {
+        spawnPellets()
+        wait(0.5, () => {sendPellets()
+            wait(4, () => {
+                go("1")
+            })
+        })
+    })
     
     },
     prepare_game: () => {
@@ -4004,7 +4049,7 @@ const scenes = {
                     add() {
                         tween(0, 1, 0.5, (t) => transition.opacity = t, easings.easeOutQuad)
                         wait(0.5, () => {
-                            go("ruins_4", transition)
+                            go("1", transition)
                         })
                     }
                 }
@@ -4579,7 +4624,7 @@ const scenes = {
                     add() {
                         tween(0, 1, 0.5, (t) => transition.opacity = t, easings.easeOutQuad)
                         wait(0.5, () => {
-                            go("ruins_4", transition)
+                            go("1", transition)
                         })
                     }
                 }
@@ -5158,7 +5203,7 @@ const scenes = {
                     add() {
                         tween(0, 1, 0.5, (t) => transition.opacity = t, easings.easeOutQuad)
                         wait(0.5, () => {
-                            go("ruins_4", transition)
+                            go("1", transition)
                         })
                     }
                 }
@@ -5660,4 +5705,4 @@ for (const key in scenes) {
     scene(key, scenes[key])
 }
 
-go("pressZ")
+go("1")

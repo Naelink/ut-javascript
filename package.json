@@ -15,6 +15,7 @@
   "description": "",
   "dependencies": {
     "express": "^4.19.2",
+    "kaboom": "^3000.0.1",
     "mysql": "^2.18.1"
   }
 }
